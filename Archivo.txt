@@ -1,0 +1,48 @@
+Este proyecto será sobre el juego tirar de la cuerda, se dividirá en salas, de dos jugadores cada una, 
+ya que cada partida va a constar de los dos jugadores rivales que interactuarán con la interfaz de la aplicación.
+
+En la interfaz aparecerá una cuerda o dibujo que será algún indicativo para que los jugadores sepan quien va ganando, 
+lo usaré para representar la puntuación.
+
+El juego es simple, hay que pulsar en la pantalla lo más rápido posible, uno de los jugadores restará y el otro sumará a la cuerda,
+el que llegue a x o -x puntos será el ganador, intentare hacer una pantalla de ganador y otra de perdedor.
+
+TXT
+	HUB
+
+	int Cuerda=0
+
+		addGrupo
+
+		leaveGrupo
+
+		tiraCuerda
+
+		compararPuntos
+
+
+
+
+
+	ENT 
+		ClsJugador
+			string nombre
+			string grupo
+			int puntuacion
+			bool derechaOIzquierda
+
+
+	VM
+		juegoVm
+			ClsJugador jugador1
+			ClsJugador jugador2
+			DelegateCommand cmd_pulsaJ1
+			DelegateCommand cmd_pulsaJ2
+
+		(Si hay forma de hacer dos VM cada uno de una jugador si es izquierda suma si es derecha resta)
+
+		juegoVM
+			ClsJugador jugador
+			(las auxiliares para la vista)
+			DelegateCommand cmd_pulsa
+			string mensajeGanador
