@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Texto", "Texto", "{38DEBE58
 		Archivo.txt = Archivo.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maui", "Maui\Maui.csproj", "{04FE8737-DEF3-4E46-9001-2252BFEA6F73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ent", "Ent\Ent.csproj", "{A405A06B-98B9-454A-A67F-703C9ED83AAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,16 @@ Global
 		{D375857C-EC43-437C-BEBB-DE0124808A82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D375857C-EC43-437C-BEBB-DE0124808A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D375857C-EC43-437C-BEBB-DE0124808A82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04FE8737-DEF3-4E46-9001-2252BFEA6F73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04FE8737-DEF3-4E46-9001-2252BFEA6F73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04FE8737-DEF3-4E46-9001-2252BFEA6F73}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{04FE8737-DEF3-4E46-9001-2252BFEA6F73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04FE8737-DEF3-4E46-9001-2252BFEA6F73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04FE8737-DEF3-4E46-9001-2252BFEA6F73}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A405A06B-98B9-454A-A67F-703C9ED83AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A405A06B-98B9-454A-A67F-703C9ED83AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A405A06B-98B9-454A-A67F-703C9ED83AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A405A06B-98B9-454A-A67F-703C9ED83AAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

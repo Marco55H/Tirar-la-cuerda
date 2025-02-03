@@ -12,35 +12,19 @@ TXT
 
 	int Cuerda=0
 
-		addGrupo
-
-		leaveGrupo
-
-		tiraCuerda
-
-		compararPuntos
-
-
-
+		addGrupo()
+		leaveGrupo()
+		tiraCuerda()
+		compararPuntos()
 
 
 	ENT 
 		ClsJugador
 			string nombre
 			string grupo
-			int puntuacion
-			bool derechaOIzquierda
-
+			int puntuacion 
 
 	VM
-		juegoVm
-			ClsJugador jugador1
-			ClsJugador jugador2
-			DelegateCommand cmd_pulsaJ1
-			DelegateCommand cmd_pulsaJ2
-
-		(Si hay forma de hacer dos VM cada uno de una jugador si es izquierda suma si es derecha resta)
-
 		juegoVM
 			ClsJugador jugador
 			(las auxiliares para la vista)
