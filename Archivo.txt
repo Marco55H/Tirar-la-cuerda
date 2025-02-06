@@ -9,24 +9,32 @@ el que llegue a x o -x puntos será el ganador, intentare hacer una pantalla de g
 
 TXT
 	HUB
-
+	Static Jugada nombre1 nombre2
 	int Cuerda=0
 
-		addGrupo()
-		leaveGrupo()
-		tiraCuerda()
-		compararPuntos()
+		espera()
+		comienza(nombre1, nombre2)
+		tira(str nombre)
 
-
-	ENT 
-		ClsJugador
-			string nombre
-			string grupo
-			int puntuacion 
 
 	VM
 		juegoVM
-			ClsJugador jugador
-			(las auxiliares para la vista)
+			str nombrePropio
+			str otroNombre
+			int puntos
+
+			sumarpuntos()
+			restarpuntos()
+
 			DelegateCommand cmd_pulsa
 			string mensajeGanador
+			haGanado()
+			haPerdido()
+
+
+
+		inicioVM
+			Str nombre
+			cmd_enviarnombre
+
+			EnviarNombre(Str)
