@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Tirar la cuerda.Client\Tirar la cuerda.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.1" />
   </ItemGroup>
 
 </Project>

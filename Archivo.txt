@@ -12,9 +12,10 @@ TXT
 	Static Jugada nombre1 nombre2
 	int Cuerda=0
 
-		espera()
-		comienza(nombre1, nombre2)
-		tira(str nombre)
+		espera(Str)
+		comienza(nombre1, nombre2, grupo)
+		unirGrupo(grupo)
+		tira(str nombre, grupo)
 
 
 	VM
@@ -29,12 +30,14 @@ TXT
 			DelegateCommand cmd_pulsa
 			string mensajeGanador
 			haGanado()
+
 			haPerdido()
 
 
 
 		inicioVM
+		    Str grupo
 			Str nombre
 			cmd_enviarnombre
 
-			EnviarNombre(Str)
+			EnviarNombre(nombre, grupo)

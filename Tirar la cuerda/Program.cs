@@ -1,5 +1,6 @@
 using Tirar_la_cuerda.Client.Pages;
 using Tirar_la_cuerda.Components;
+using Tirar_la_cuerda.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
+builder.Services.AddSignalR();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -29,5 +31,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Tirar_la_cuerda.Client._Imports).Assembly);
+
+app.MapHub<HubCuerda>("/hubCuerda");
 
 app.Run();

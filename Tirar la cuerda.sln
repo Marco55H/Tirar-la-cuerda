@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tirar la cuerda", "Tirar la cuerda\Tirar la cuerda.csproj", "{923CAFC5-D8FB-43C2-85EB-BB537BE7FC16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tirar_la_cuerda", "Tirar la cuerda\Tirar_la_cuerda.csproj", "{923CAFC5-D8FB-43C2-85EB-BB537BE7FC16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tirar la cuerda.Client", "Tirar la cuerda.Client\Tirar la cuerda.Client.csproj", "{D375857C-EC43-437C-BEBB-DE0124808A82}"
 EndProject
