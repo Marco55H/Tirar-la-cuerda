@@ -5,13 +5,14 @@ using System.Runtime.CompilerServices;
 
 namespace Maui.ViewModels
 {
-    internal class EntrarPartidaVM : INotifyPropertyChanged
+    public class EntrarPartidaVM : INotifyPropertyChanged
     {
         #region Atributos
         private string grupo;
         private string nombre;
+        private List<string> jugadpres;
         private readonly HubConnection _connection;
-        private DelegateCommand cmdConfirmarParticipacion;
+        private DelegateCommand cmdUnirGrupo;
         #endregion
 
 
@@ -24,7 +25,7 @@ namespace Maui.ViewModels
             set
             {
                 grupo = value;
-                NotifyPropertyChanged("Grupo");
+                cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
         }
@@ -37,29 +38,41 @@ namespace Maui.ViewModels
             set
             {
                 nombre = value;
-                NotifyPropertyChanged("Nombre");
+                cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
         }
 
-        public DelegateCommand CmdConfirmarParticipacion
+        public List<string> Jugadores
+        {
+            get { return jugadpres; }
+        }
+
+        public DelegateCommand CmdUnirGrupo
         {
 
-            get { return cmdConfirmarParticipacion; }
+            get { return cmdUnirGrupo; }
 
         }
         #endregion
 
 
         #region Constructores
-        EntrarPartidaVM()
+        public EntrarPartidaVM()
         {
-            _connection = new HubConnectionBuilder().WithUrl(new Uri("https://localhost:7135/chathub")).Build();
+            //Conectar con URL del servidor
+            _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
+        
 
             esperarConexion();
 
-            cmdConfirmarParticipacion = new DelegateCommand(cmd_Execute, cmd_CanExecute);
+            cmdUnirGrupo = new DelegateCommand(cmdUnirGrupo_Execute, cmdUnirGrupo_CanExecute);
+
+            nombre = "";
+            grupo = "";
+            jugadpres = new List<string>();
         }
+
         #endregion
 
 
@@ -74,6 +87,31 @@ namespace Maui.ViewModels
             {
                 await _connection.StartAsync();
             });
+        }
+
+        //Comprobar si se puede ejecutar el comando, si no hay nada vacio, se puede ejecutar
+        private bool cmdUnirGrupo_CanExecute()
+        {
+            bool sePuedeEjecutar = true;
+
+            if(string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(grupo))
+            {
+                sePuedeEjecutar = false;
+            }
+
+            return sePuedeEjecutar;
+        }
+
+        //Ejecutar el comando, añadimos al grupo y comienza a esperar a que empiece la partida
+        private async void cmdUnirGrupo_Execute()
+        {
+            await _connection.InvokeCoreAsync("JoinGroup", args:
+            new[]
+                {
+                grupo,
+                nombre
+                }
+            );
         }
         #endregion
 

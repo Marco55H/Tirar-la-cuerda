@@ -8,8 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-var app = builder.Build();
 builder.Services.AddSignalR();
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
