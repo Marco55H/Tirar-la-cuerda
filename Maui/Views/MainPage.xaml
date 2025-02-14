@@ -15,6 +15,19 @@
         <Entry Text="{Binding Grupo}" Placeholder="Código de la partida" HorizontalOptions="Center" Margin="0,20,0,0"></Entry>
         <Entry Text="{Binding Nombre}" Placeholder="Nombre" HorizontalOptions="Center" Margin="0,20,0,0"></Entry>
         <Button Text="Entrar" Command="{Binding CmdUnirGrupo}" HorizontalOptions="Center" Margin="0,20,0,0"></Button>
+
+        <ListView ItemsSource="{Binding Jugadores}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <Label Text="{Binding .}" FontAttributes="Bold"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
     </VerticalStackLayout>
 
 

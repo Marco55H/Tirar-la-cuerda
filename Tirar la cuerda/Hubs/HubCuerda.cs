@@ -11,6 +11,12 @@ namespace Tirar_la_cuerda.Hubs
         // Unirse a un grupo
         public async Task JoinGroup(string grupo, string nombre)
         {
+            //Comprobar que los nombres no esten reetidos
+            if(nombre1 == nombre || nombre2 == nombre)
+            {
+                await Clients.Caller.SendAsync("NombreRepetido");
+            }
+
             //Para comprobar que los nombres se inicialicen
             if (nombre1 == "")
             {
@@ -21,7 +27,19 @@ namespace Tirar_la_cuerda.Hubs
                 nombre2 = nombre;
             }
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, grupo);
+            //Si los dos nombres están llenos, no se puede unir nadie más
+            if (nombre2 !="" && nombre1 !="")
+            {
+                await Clients.Caller.SendAsync("GrupoLleno");
+            }
+            // Si no, se unen a un grupo
+            else
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, grupo);
+                //Para que aparezcan en la  vista los jugadores
+                await Clients.Group(grupo).SendAsync("añadeJugador", nombre1, nombre2);
+            }
+
 
         }
 
