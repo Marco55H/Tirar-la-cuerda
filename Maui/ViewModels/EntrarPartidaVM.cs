@@ -13,8 +13,9 @@ namespace Maui.ViewModels
         private List<string> jugadores;
         private readonly HubConnection _connection;
         private DelegateCommand cmdUnirGrupo;
-        #endregion
+        private string lleno;
 
+        #endregion
 
         #region Propiedades 
         public string Grupo
@@ -28,6 +29,11 @@ namespace Maui.ViewModels
                 cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
+        }
+
+        public string Lleno
+        {
+            get { return lleno; }
         }
 
         public string Nombre
@@ -56,7 +62,6 @@ namespace Maui.ViewModels
         }
         #endregion
 
-
         #region Constructores
         public EntrarPartidaVM()
         {
@@ -64,6 +69,7 @@ namespace Maui.ViewModels
             _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
 
             _connection.On<string, string>("añadeJugador", verNombres);
+            _connection.On("GrupoLleno", grupoLleno);
 
             // Esperar a que se conecte
             esperarConexion();
@@ -76,8 +82,43 @@ namespace Maui.ViewModels
         }
         #endregion
 
+        #region Commands
+        //Comprobar si se puede ejecutar el comando, si no hay nada vacio, se puede ejecutar
+        private bool cmdUnirGrupo_CanExecute()
+        {
+            bool sePuedeEjecutar = true;
+
+            if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(grupo))
+            {
+                sePuedeEjecutar = false;
+            }
+
+            return sePuedeEjecutar;
+        }
+
+        //Ejecutar el comando, añadimos al grupo y comienza a esperar a que empiece la partida
+        private async void cmdUnirGrupo_Execute()
+        {
+            await _connection.InvokeCoreAsync("JoinGroup", args:
+            new[]
+                {
+                grupo,
+                nombre
+                }
+            );
+        }
+        #endregion
 
         #region Métodos
+        private void grupoLleno()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                lleno = "Grupo lleno";
+                NotifyPropertyChanged("Lleno");
+            });
+        }
+
 
         private void verNombres(String nombre1, String nombre2)
         {
@@ -99,31 +140,6 @@ namespace Maui.ViewModels
             {
                 await _connection.StartAsync();
             });
-        }
-
-        //Comprobar si se puede ejecutar el comando, si no hay nada vacio, se puede ejecutar
-        private bool cmdUnirGrupo_CanExecute()
-        {
-            bool sePuedeEjecutar = true;
-
-            if(string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(grupo))
-            {
-                sePuedeEjecutar = false;
-            }
-
-            return sePuedeEjecutar;
-        }
-
-        //Ejecutar el comando, añadimos al grupo y comienza a esperar a que empiece la partida
-        private async void cmdUnirGrupo_Execute()
-        {
-            await _connection.InvokeCoreAsync("JoinGroup", args:
-            new[]
-                {
-                grupo,
-                nombre
-                }
-            );
         }
         #endregion
 

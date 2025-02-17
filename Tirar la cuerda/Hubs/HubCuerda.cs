@@ -28,7 +28,7 @@ namespace Tirar_la_cuerda.Hubs
             }
 
             //Si los dos nombres están llenos, no se puede unir nadie más
-            if (nombre2 !="" && nombre1 !="")
+            if (nombre2 !="")
             {
                 await Clients.Caller.SendAsync("GrupoLleno");
             }
@@ -39,7 +39,6 @@ namespace Tirar_la_cuerda.Hubs
                 //Para que aparezcan en la  vista los jugadores
                 await Clients.Group(grupo).SendAsync("añadeJugador", nombre1, nombre2);
             }
-
 
         }
 
@@ -52,6 +51,5 @@ namespace Tirar_la_cuerda.Hubs
                 await Clients.Group(grupo).SendAsync("EmpiezaJuego", nombre);
             }
         }
-    }
-    
+    }   
 }
