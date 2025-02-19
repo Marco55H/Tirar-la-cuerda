@@ -1,5 +1,7 @@
-﻿using Maui.ViewModels.Utility;
+﻿using Ent;
+using Maui.ViewModels.Utility;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -8,48 +10,47 @@ namespace Maui.ViewModels
     public class EntrarPartidaVM : INotifyPropertyChanged
     {
         #region Atributos
-        private string grupo;
-        private string nombre;
-        private List<string> jugadores;
+        private ClsJugador jugador;
+        private ObservableCollection<ClsJugador> jugadores;
         private readonly HubConnection _connection;
         private DelegateCommand cmdUnirGrupo;
-        private string lleno;
-
+        private DelegateCommand cmdPreparado;
+        private string llenoORepetido;
         #endregion
 
         #region Propiedades 
         public string Grupo
         {
 
-            get { return grupo; }
+            get { return jugador.Grupo; }
 
             set
             {
-                grupo = value;
+                jugador.Grupo = value;
                 cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
         }
 
-        public string Lleno
+        public string LlenoORepetido
         {
-            get { return lleno; }
+            get { return llenoORepetido; }
         }
 
         public string Nombre
         {
 
-            get { return nombre; }
+            get { return jugador.Nombre; }
 
             set
             {
-                nombre = value;
+                jugador.Nombre = value;
                 cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
         }
 
-        public List<string> Jugadores
+        public ObservableCollection<ClsJugador> Jugadores
         {
             get { return jugadores; }
         }
@@ -68,17 +69,17 @@ namespace Maui.ViewModels
             //Conectar con URL del servidor
             _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
 
-            _connection.On<string, string>("añadeJugador", verNombres);
+            _connection.On<ClsJugador, ClsJugador>("añadeJugador", verNombres);
             _connection.On("GrupoLleno", grupoLleno);
+            _connection.On("NombreRepetido", nombreRepetido);
 
             // Esperar a que se conecte
             esperarConexion();
 
             cmdUnirGrupo = new DelegateCommand(cmdUnirGrupo_Execute, cmdUnirGrupo_CanExecute);
 
-            nombre = "";
-            grupo = "";
-            jugadores = new List<string>();
+            jugador = new ClsJugador();
+            jugadores = new ObservableCollection<ClsJugador>();
         }
         #endregion
 
@@ -88,7 +89,7 @@ namespace Maui.ViewModels
         {
             bool sePuedeEjecutar = true;
 
-            if (string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(grupo))
+            if (string.IsNullOrEmpty(jugador.Nombre) || string.IsNullOrEmpty(jugador.Grupo))
             {
                 sePuedeEjecutar = false;
             }
@@ -99,11 +100,12 @@ namespace Maui.ViewModels
         //Ejecutar el comando, añadimos al grupo y comienza a esperar a que empiece la partida
         private async void cmdUnirGrupo_Execute()
         {
+            
             await _connection.InvokeCoreAsync("JoinGroup", args:
             new[]
                 {
-                grupo,
-                nombre
+                jugador.Grupo,
+                jugador.Nombre
                 }
             );
         }
@@ -114,26 +116,41 @@ namespace Maui.ViewModels
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                lleno = "Grupo lleno";
-                NotifyPropertyChanged("Lleno");
+                llenoORepetido = "Grupo lleno";
+                NotifyPropertyChanged("LlenoORepetido");
             });
         }
 
-
-        private void verNombres(String nombre1, String nombre2)
+        private void nombreRepetido()
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                jugadores.Add(nombre1);
-                jugadores.Add(nombre2);
-                NotifyPropertyChanged("Jugadores");
+                llenoORepetido = "Nombre Repetido";
+                NotifyPropertyChanged("LlenoORepetido");
+            });
+        }
+
+        /// <summary>
+        /// Metodo que añade los jugadores a la lista de jugadores
+        /// </summary>
+        /// <param name="jugador1">1 jugador</param>
+        /// <param name="jugador2">2 jugador</param>
+        private void verNombres(ClsJugador jugador1, ClsJugador jugador2)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                jugadores.Clear();
+                jugadores.Add(jugador1);
+                jugadores.Add(jugador2);
+                llenoORepetido = "";
+                NotifyPropertyChanged("LlenoORepetido");
             });
         }
 
         /// <summary>
         /// Metodo asincrono que inicia la conexion con el hub del servidor
         /// </summary>
-        /// <returns></returns>   
+        /// <returns></returns>
         private async Task esperarConexion()
         {
             MainThread.BeginInvokeOnMainThread(async () =>
