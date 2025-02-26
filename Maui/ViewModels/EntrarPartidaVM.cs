@@ -14,11 +14,28 @@ namespace Maui.ViewModels
         private ObservableCollection<ClsJugador> jugadores;
         private readonly HubConnection _connection;
         private DelegateCommand cmdUnirGrupo;
+        private DelegateCommand cmdSalirGrupo;
         private DelegateCommand cmdPreparado;
         private string llenoORepetido;
+        private List<ClsGrupo> grupos;
+        private bool estaEnGrupo;
         #endregion
 
         #region Propiedades 
+
+
+        public bool EstaEnGrupo
+        {
+            get { return estaEnGrupo; }
+            set
+            {
+                estaEnGrupo = value;
+                NotifyPropertyChanged("EstaEnGrupo");
+                cmdSalirGrupo.RaiseCanExecuteChanged(); // Actualiza el estado del botón de salir
+                cmdPreparado.RaiseCanExecuteChanged(); // Actualiza el estado del botón de estar Preparado
+            }
+        }
+
         public string Grupo
         {
 
@@ -61,6 +78,17 @@ namespace Maui.ViewModels
             get { return cmdUnirGrupo; }
 
         }
+        public DelegateCommand CmdSalirGrupo
+        {
+
+            get { return cmdSalirGrupo; }
+
+        }
+        public DelegateCommand CmdPreparado
+
+        {
+            get { return cmdPreparado; }
+        }
         #endregion
 
         #region Constructores
@@ -69,38 +97,68 @@ namespace Maui.ViewModels
             //Conectar con URL del servidor
             _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
 
-            _connection.On<ClsJugador, ClsJugador>("añadeJugador", verNombres);
+            _connection.On<ClsJugador, ClsJugador>("jugadoresDelGrupo", verNombres);
             _connection.On("GrupoLleno", grupoLleno);
             _connection.On("NombreRepetido", nombreRepetido);
+            _connection.On("IniciarJuego", empezar);
 
             // Esperar a que se conecte
             esperarConexion();
 
+            estaEnGrupo = false;
             cmdUnirGrupo = new DelegateCommand(cmdUnirGrupo_Execute, cmdUnirGrupo_CanExecute);
+            cmdSalirGrupo = new DelegateCommand(cmdSalirGrupo_Execute, () => EstaEnGrupo);
+            cmdPreparado = new DelegateCommand(cmdPreparado_Execute, () => EstaEnGrupo);
 
+            grupos = new List<ClsGrupo>();
             jugador = new ClsJugador();
             jugadores = new ObservableCollection<ClsJugador>();
         }
+
         #endregion
 
         #region Commands
+        //Ejecutar el comando, si se puede ejecutar, se envia al servidor que el jugador esta preparado
+        private async void cmdPreparado_Execute()
+        {
+           await _connection.InvokeCoreAsync("Preparado", args:
+           new[]
+                {
+                jugador.Grupo,
+                jugador.Nombre
+                }
+            );
+        }
+
         //Comprobar si se puede ejecutar el comando, si no hay nada vacio, se puede ejecutar
         private bool cmdUnirGrupo_CanExecute()
         {
-            bool sePuedeEjecutar = true;
-
-            if (string.IsNullOrEmpty(jugador.Nombre) || string.IsNullOrEmpty(jugador.Grupo))
+            bool sePuedeEjecutar = false;
+            if ( !string.IsNullOrEmpty(jugador.Nombre) && !string.IsNullOrEmpty(jugador.Grupo))
             {
-                sePuedeEjecutar = false;
-            }
 
+                sePuedeEjecutar = true;
+                
+            }
             return sePuedeEjecutar;
         }
 
-        //Ejecutar el comando, añadimos al grupo y comienza a esperar a que empiece la partida
+        //Ejecutar el comando, Salimos del grupo
+        private async void cmdSalirGrupo_Execute()
+        {
+            await _connection.InvokeCoreAsync("LeaveGroup", args:
+            new[]
+                {
+                jugador.Grupo,
+                jugador.Nombre
+                }
+            );
+            EstaEnGrupo = false;
+        }
+
+        //Ejecutar el comando, añadimos al grupoa
         private async void cmdUnirGrupo_Execute()
         {
-            
             await _connection.InvokeCoreAsync("JoinGroup", args:
             new[]
                 {
@@ -108,10 +166,15 @@ namespace Maui.ViewModels
                 jugador.Nombre
                 }
             );
+            EstaEnGrupo = true;
         }
         #endregion
 
         #region Métodos
+
+        /// <summary>
+        /// El Hub avisa de que el grupo esta lleno, cuando los dos nombres estan llenos, se muestra el mensaje
+        /// </summary>
         private void grupoLleno()
         {
             MainThread.BeginInvokeOnMainThread(() =>
@@ -121,6 +184,9 @@ namespace Maui.ViewModels
             });
         }
 
+        /// <summary>
+        /// El Hub avisa de que el grupo esta lleno, cuando se quiere introducir un nombre identico a otro, se muestra el mensaje
+        /// </summary>
         private void nombreRepetido()
         {
             MainThread.BeginInvokeOnMainThread(() =>
@@ -144,6 +210,22 @@ namespace Maui.ViewModels
                 jugadores.Add(jugador2);
                 llenoORepetido = "";
                 NotifyPropertyChanged("LlenoORepetido");
+            });
+        }
+
+        /// <summary>
+        /// Metodo que inicia la partida, me mandará a la ventana de la partida
+        /// </summary>
+        private async void empezar()
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var diccionario = new Dictionary<string, object>
+                {
+                {"persona", jugador}
+                };
+
+                await Shell.Current.GoToAsync("///JuegoView", diccionario);
             });
         }
 

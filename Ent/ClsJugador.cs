@@ -21,7 +21,13 @@
         #endregion
 
         #region Constructores
-        public ClsJugador() { }
+        public ClsJugador() 
+        {
+            this.nombre = "";
+            this.grupo = "";
+            this.puntuacion = 0;
+            this.listo = false;
+        }
         public ClsJugador(string _nombre, string _grupo, int _puntuacion, bool _listo)
         {
             this.nombre = _nombre;

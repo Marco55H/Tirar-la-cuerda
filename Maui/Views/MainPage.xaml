@@ -2,82 +2,136 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Maui.Views.MainPage"
-             xmlns:vm="clr-namespace:Maui.ViewModels">
+             xmlns:vm="clr-namespace:Maui.ViewModels"
+             BackgroundColor="#f4f4f4"
+             Padding="20">
 
     <ContentPage.BindingContext>
         <vm:EntrarPartidaVM />
     </ContentPage.BindingContext>
 
     <Grid>
-        <Image Source="images/tiracuerda.png" Aspect="AspectFill" Opacity="0.3" />
-
-        <VerticalStackLayout Padding="20" Spacing="15">
-            <Label Text="Tirar la cuerda"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="#333"
-                   HorizontalOptions="Center" />
-
-            <Label Text="Ingresa el código de la partida"
-                   FontSize="16"
-                   TextColor="#555"
-                   HorizontalOptions="Center" />
-
-            <Entry Text="{Binding Grupo}"
-                   Placeholder="Código de la partida"
-                   PlaceholderColor="#aaa"
-                   FontSize="14"
-                   BackgroundColor="White"
-                   HorizontalOptions="FillAndExpand" />
-
-            <Entry Text="{Binding Nombre}"
-                   Placeholder="Nombre"
-                   PlaceholderColor="#aaa"
-                   FontSize="14"
-                   BackgroundColor="White"
-                   HorizontalOptions="FillAndExpand" />
-
-            <Button Text="Entrar"
-                    Command="{Binding CmdUnirGrupo}"
-                    BackgroundColor="#007AFF"
-                    TextColor="White"
-                    FontSize="16"
-                    Padding="12"
-                    CornerRadius="10"
-                    HorizontalOptions="FillAndExpand" />
-
-            <!-- List of Players -->
-            <Label Text="Jugadores:"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   TextColor="#333"
-                   HorizontalOptions="Start" />
-
-            <Frame BackgroundColor="White" CornerRadius="10" Padding="10" HasShadow="True">
-                <ListView ItemsSource="{Binding Jugadores}" BackgroundColor="White">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <StackLayout Padding="10">
-                                    <Label Text="{Binding Nombre}"
-                                           FontSize="16"
-                                           TextColor="#333" />
-                                </StackLayout>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Frame>
-
-            <Label Text="{Binding LlenoORepetido}"
-                   FontSize="14"
-                   TextColor="#d9534f"
-                   HorizontalOptions="Center" />
-
-            <Image Source="tiracuerda.png"
-               Aspect="AspectFit"
+        <!-- Imagen de Fondo -->
+        <Image Source="images/tiracuerda.png"
+               Aspect="AspectFill"
+               Opacity="0.15"
                HorizontalOptions="FillAndExpand"
                VerticalOptions="FillAndExpand" />
-        </VerticalStackLayout>
+
+        <ScrollView>
+            <VerticalStackLayout Spacing="20">
+
+                <!-- Título -->
+                <Label Text="Tirar la cuerda"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="#333"
+                       HorizontalOptions="Center" />
+
+                <Label Text="Ingresa el código de la partida"
+                       FontSize="16"
+                       TextColor="#666"
+                       HorizontalOptions="Center" />
+
+                <!-- Entradas -->
+                <Frame BackgroundColor="White"
+                       CornerRadius="10"
+                       Padding="15"
+                       HasShadow="True"
+                       Opacity="0.9">
+                    <VerticalStackLayout Spacing="10">
+                        <Entry Text="{Binding Grupo}"
+                               Placeholder="Código de la partida"
+                               PlaceholderColor="#aaa"
+                               FontSize="16"
+                               BackgroundColor="#f9f9f9"
+                               HorizontalOptions="FillAndExpand" />
+
+                        <Entry Text="{Binding Nombre}"
+                               Placeholder="Nombre"
+                               PlaceholderColor="#aaa"
+                               FontSize="16"
+                               BackgroundColor="#f9f9f9"
+                               HorizontalOptions="FillAndExpand" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Botón de Entrar -->
+                <Button Text="Entrar"
+                        Command="{Binding CmdUnirGrupo}"
+                        BackgroundColor="#007AFF"
+                        TextColor="White"
+                        FontSize="18"
+                        Padding="12"
+                        CornerRadius="10"
+                        HorizontalOptions="FillAndExpand" />
+
+                <!-- Botón de Entrar -->
+                <Button Text="Salir"
+                        Command="{Binding CmdSalirGrupo}"
+                        BackgroundColor="#007AFF"
+                        TextColor="White"
+                        FontSize="18"
+                        Padding="12"
+                        CornerRadius="10"
+                        HorizontalOptions="FillAndExpand" />
+
+                <!-- Botón para prepararse -->
+                <Button Text="Listo"
+                    Command="{Binding CmdPreparado}"
+                    BackgroundColor="Red"
+                    TextColor="White"
+                    FontSize="18"
+                    Padding="12"
+                    CornerRadius="10"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="OnButtonClicked" />
+
+                <!-- Lista de Jugadores -->
+                <Label Text="Jugadores en la partida:"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="#333"
+                       HorizontalOptions="Start" />
+
+                <Frame BackgroundColor="White"
+                       CornerRadius="10"
+                       Padding="10"
+                       HasShadow="True"
+                       Opacity="0.9">
+                    <ListView ItemsSource="{Binding Jugadores}" BackgroundColor="White">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Padding="10">
+                                        <Label Text="{Binding Nombre}"
+                                               FontSize="16"
+                                               TextColor="#333" />
+                                        <Label Text="{Binding Listo}"                                               
+                                               FontSize="8"
+                                               TextColor="#333" />
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Frame>
+
+                <!-- Mensaje de Error -->
+                <Label Text="{Binding LlenoORepetido}"
+                       FontSize="14"
+                       TextColor="#d9534f"
+                       HorizontalOptions="Center"
+                       FontAttributes="Bold" />
+
+                <!-- Imagen Inferior -->
+                <Image Source="tiracuerda.png"
+                       Aspect="AspectFit"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Opacity="0.7" />
+
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

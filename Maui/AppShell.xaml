@@ -11,5 +11,11 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    
+    <ShellContent  
+        Title="Editar" 
+        ContentTemplate="{DataTemplate local:JuegoView}" 
+        Route="JuegoView" 
+        FlyoutItemIsVisible="False"/>
 
 </Shell>
