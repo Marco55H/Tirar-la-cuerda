@@ -189,20 +189,20 @@ namespace Tirar_la_cuerda.Hubs
             //Si el grupo existe, se envia el nombre del otro jugador
             if (grupoActual != null)
             {
-                //Si el jugador 2 es el que ha pulsado, se le suma un punto al jugador 2 y se le resta al jugador 1
+                //Si el jugador 2 es el que ha pulsado, se le restan puntos al jugador 2 y se le suman al jugador 1 se hace asi por interfaz
                 if (grupoActual.Jugadores[1].Nombre == nombre)
                 {
-                    grupoActual.Jugadores[0].Puntuacion--;
-                    grupoActual.Jugadores[1].Puntuacion++;
+                    grupoActual.Jugadores[0].Puntuacion+=8;
+                    grupoActual.Jugadores[1].Puntuacion-=8;
                 }
-                //Si el jugador 2 no ha sido el que ha pulsado, se le suma un punto al jugador 1 y se le resta al jugador 2
+                //Si el jugador 2 no ha sido el que ha pulsado, se le restan puntos al jugador 1 y se le suman al jugador 2
                 else
                 {
-                    grupoActual.Jugadores[0].Puntuacion++;
-                    grupoActual.Jugadores[1].Puntuacion--;
+                    grupoActual.Jugadores[0].Puntuacion-=8;
+                    grupoActual.Jugadores[1].Puntuacion+=8;
                 }
                 //Enviamos a los jugadores del grupo los dos jugadores con sus puntuaciones modificadas
-                await Clients.Group(grupo).SendAsync("tirarCuerda", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
+                await Clients.All.SendAsync("tirarCuerda", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
             }
         }
     }

@@ -19,11 +19,17 @@ namespace Maui.ViewModels
         private readonly HubConnection _connection;
         private string nombreEnemigo;
         private DelegateCommand cmdTirarCuerda;
-        private int puntosEnemigo;
+        private int puntuacionMaxima;
         #endregion
 
 
-        #region Propiedades        
+        #region Propiedades  
+        
+        public int PuntuacionMaxima
+        {
+            get { return puntuacionMaxima; }
+        }
+
         public ClsJugador Jugador
         {
             get { return jugador; }
@@ -48,17 +54,20 @@ namespace Maui.ViewModels
 
         #endregion
 
-            #region Contructor
+        #region Contructor
         public JuegoVM()
         {
-            //Conectar con URL del servidor
             _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
-            _connection.On<string>("nombreEnemigo", nombreEnemigoEncontrado);
-            _connection.On<ClsJugador, ClsJugador>("tirarCuerda", calculaPuntos);
-            // Esperar a que se conecte
+
+            // Conectarse y suscribirse
             esperarConexion();
 
-            cmdTirarCuerda = new DelegateCommand(cmdTirarCuerda_Execute, cmdTirarCuerda_CanExecute);
+            _connection.On<string>("nombreEnemigo", nombreEnemigoEncontrado);
+            _connection.On<ClsJugador, ClsJugador>("tirarCuerda", calculaPuntos);
+
+            cmdTirarCuerda = new DelegateCommand(cmdTirarCuerda_Execute, true);
+
+            puntuacionMaxima = 136;
         }
 
         #endregion
@@ -131,18 +140,14 @@ namespace Maui.ViewModels
                 //los puntos del jugador 2 serán los del enemigo
                 if (Jugador1.Nombre == jugador.Nombre)
                 {
-                    puntosEnemigo = Jugador2.Puntuacion;
                     jugador.Puntuacion = Jugador1.Puntuacion;
-                    NotifyPropertyChanged("PuntosEnemigo");
                     NotifyPropertyChanged("Jugador");
                 }
                 //Si el nombre del jugador acutal es igual al nombre del jugador 2 del HUB, los puntos del jugador actual serán los del jugador 2 del HUB,
                 //los puntos del jugador 1 serán los del enemigo
                 else
                 {
-                    puntosEnemigo = Jugador1.Puntuacion;
                     jugador.Puntuacion = Jugador2.Puntuacion;
-                    NotifyPropertyChanged("PuntosEnemigo");
                     NotifyPropertyChanged("Jugador");
                 }
             });
@@ -153,11 +158,8 @@ namespace Maui.ViewModels
         /// </summary>
         /// <returns></returns>
         private async Task esperarConexion()
-        {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                await _connection.StartAsync();
-            });
+        {         
+            await _connection.StartAsync();
         }
         #endregion
 

@@ -3,36 +3,79 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Maui.Views.JuegoView"
              xmlns:local="clr-namespace:Maui.ViewModels"
-             Title="JuegoView">
+             Title="Batalla de Cuerda">
 
     <ContentPage.BindingContext>
         <local:JuegoVM />
     </ContentPage.BindingContext>
 
-    <Grid Padding="20">
-        <HorizontalStackLayout>
-            <Label Text="Sala " FontSize="33" TextColor="DarkBlue" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,10" />
-            <Label Text="{Binding Jugador.Grupo}" FontSize="33" TextColor="DarkBlue" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,10" />
-        </HorizontalStackLayout>
+    <Grid Padding="30" BackgroundColor="#F5F5F5">
 
-        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto, *" VerticalOptions="CenterAndExpand">
-            <Label Text="Tú" FontSize="24" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Start" />
-            <Label Text="VS" FontSize="24" TextColor="Red" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Center" />
-            <Label Text="{Binding NombreEnemigo}" FontSize="24" TextColor="Black" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="End" />
+        <!-- ENCABEZADO CON NOMBRE DE LA SALA -->
+        <Frame BackgroundColor="#263238" Padding="20" CornerRadius="12"
+               HasShadow="True" HorizontalOptions="Fill">
+            <Label Text="{Binding Jugador.Grupo}"
+                   FontSize="28" TextColor="White"
+                   FontAttributes="Bold" HorizontalOptions="Center"/>
+        </Frame>
 
-            <Label Text="Puntos" FontSize="24" TextColor="Black" FontAttributes="Bold" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Margin="0,10" />
-            <Label Text="{Binding Jugador.Puntuacion}" FontSize="24" TextColor="Black" FontAttributes="Bold" Grid.Row="1" Grid.Column="2" HorizontalOptions="End" Margin="0,10" />
-        </Grid>
+        <!-- Contenedor de la interfaz -->
+        <Frame CornerRadius="12" BackgroundColor="White" Padding="20" Margin="15"
+               HasShadow="True" VerticalOptions="CenterAndExpand">
 
-        <Button Text="¡Tirar de la cuerda!" 
-                FontSize="20" 
-                TextColor="White" 
-                BackgroundColor="DarkRed" 
-                CornerRadius="10" 
-                Padding="10" 
-                HorizontalOptions="Center" 
-                VerticalOptions="End" 
-                Command="{Binding CmdTirarCuerda}" />
+            <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*, Auto, *">
+
+                <!-- Jugador -->
+                <VerticalStackLayout Grid.Row="0" Grid.Column="0" HorizontalOptions="Start">
+                    <Image Source="avatar_jugador.png" WidthRequest="70" HeightRequest="70"/>
+                    <Label Text="Tú" FontSize="22" FontAttributes="Bold"
+                           TextColor="{Binding EsGanador, Converter={StaticResource BoolToColorConverter}}"/>
+                </VerticalStackLayout>
+
+                <!-- Texto VS -->
+                <Label Text="VS" FontSize="24" TextColor="DarkRed" FontAttributes="Bold"
+                       Grid.Row="0" Grid.Column="1" HorizontalOptions="Center"/>
+
+                <!-- Enemigo -->
+                <VerticalStackLayout Grid.Row="0" Grid.Column="2" HorizontalOptions="End">
+                    <Image Source="avatar_enemigo.png" WidthRequest="70" HeightRequest="70"/>
+                    <Label Text="{Binding NombreEnemigo}" FontSize="22" FontAttributes="Bold"
+                           TextColor="{Binding EsPerdedor, Converter={StaticResource BoolToColorConverter}}"/>
+                </VerticalStackLayout>
+
+                <!-- Imagen de la cuerda más grande -->
+                <Image Source="cuerda.png"
+                       Grid.Row="1" Grid.ColumnSpan="3"
+                       Aspect="Fill" HorizontalOptions="Fill" VerticalOptions="Center"
+                       TranslationX="{Binding Jugador.Puntuacion, Mode=TwoWay}"
+                       WidthRequest="600" HeightRequest="250"/>
+
+                <!-- BARRA DE PROGRESO PROFESIONAL -->
+                <Frame Grid.Row="2" Grid.ColumnSpan="3"
+                       BackgroundColor="#E0E0E0" CornerRadius="10"
+                       Padding="5" HorizontalOptions="Fill" Margin="10">
+                    <ProgressBar Progress="{Binding Jugador.Puntuacion, Mode=TwoWay}"
+                                 ProgressColor="Red" BackgroundColor="Green"
+                                 HeightRequest="14"/>
+                </Frame>
+
+                <!-- Marca cuando la puntuación es 120 -->
+                <Image Source="marca.png" 
+                       WidthRequest="45" HeightRequest="45" 
+                       IsVisible="{Binding PuntuacionMaxima}" 
+                       Grid.Row="3" Grid.ColumnSpan="3"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                <!-- BOTÓN AL MEDIO Y MÁS GRANDE -->
+                <Button Text="¡Tirar de la cuerda!" 
+                        FontSize="28" TextColor="White" 
+                        BackgroundColor="#D84315" CornerRadius="25"
+                        Padding="20" HorizontalOptions="Center" 
+                        VerticalOptions="Center" Grid.Row="4" Grid.ColumnSpan="3"
+                        Command="{Binding CmdTirarCuerda}"
+                        WidthRequest="350" HeightRequest="90"/>
+            </Grid>
+        </Frame>
 
     </Grid>
 
