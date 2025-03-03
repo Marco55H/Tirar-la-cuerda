@@ -6,10 +6,34 @@
              Title="JuegoView">
 
     <ContentPage.BindingContext>
-        <local:JuegoVM></local:JuegoVM>
+        <local:JuegoVM />
     </ContentPage.BindingContext>
 
-    <VerticalStackLayout>
-        <Label Text="{Binding Jugador.Nombre}"/>
-    </VerticalStackLayout>
+    <Grid Padding="20">
+        <HorizontalStackLayout>
+            <Label Text="Sala " FontSize="33" TextColor="DarkBlue" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,10" />
+            <Label Text="{Binding Jugador.Grupo}" FontSize="33" TextColor="DarkBlue" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,10" />
+        </HorizontalStackLayout>
+
+        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto, *" VerticalOptions="CenterAndExpand">
+            <Label Text="Tú" FontSize="24" TextColor="Black" FontAttributes="Bold" HorizontalOptions="Start" />
+            <Label Text="VS" FontSize="24" TextColor="Red" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Center" />
+            <Label Text="{Binding NombreEnemigo}" FontSize="24" TextColor="Black" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="End" />
+
+            <Label Text="Puntos" FontSize="24" TextColor="Black" FontAttributes="Bold" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" Margin="0,10" />
+            <Label Text="{Binding Jugador.Puntuacion}" FontSize="24" TextColor="Black" FontAttributes="Bold" Grid.Row="1" Grid.Column="2" HorizontalOptions="End" Margin="0,10" />
+        </Grid>
+
+        <Button Text="¡Tirar de la cuerda!" 
+                FontSize="20" 
+                TextColor="White" 
+                BackgroundColor="DarkRed" 
+                CornerRadius="10" 
+                Padding="10" 
+                HorizontalOptions="Center" 
+                VerticalOptions="End" 
+                Command="{Binding CmdTirarCuerda}" />
+
+    </Grid>
+
 </ContentPage>

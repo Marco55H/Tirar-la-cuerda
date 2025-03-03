@@ -1,5 +1,6 @@
 ﻿namespace Ent
 {
+    [Serializable]
     public class ClsJugador
     {
         #region atributos

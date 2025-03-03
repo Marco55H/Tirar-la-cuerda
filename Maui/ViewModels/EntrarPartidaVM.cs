@@ -23,6 +23,15 @@ namespace Maui.ViewModels
 
         #region Propiedades 
 
+        public ClsJugador Jugador
+        {
+            get { return jugador; }
+            set
+            {
+                jugador = value;
+                NotifyPropertyChanged("Jugador");
+            }
+        }
 
         public bool EstaEnGrupo
         {
@@ -222,7 +231,7 @@ namespace Maui.ViewModels
             {
                 var diccionario = new Dictionary<string, object>
                 {
-                {"persona", jugador}
+                {"jugador", jugador}
                 };
 
                 await Shell.Current.GoToAsync("///JuegoView", diccionario);

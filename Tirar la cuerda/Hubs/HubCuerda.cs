@@ -158,5 +158,52 @@ namespace Tirar_la_cuerda.Hubs
                 }
             }
         }
+
+        // Pillar el otro jugador
+        public async Task nombreEnemigo(string grupo, string nombre)
+        {
+            //Esta variable se usa para ver el grupo que estamos usando
+            ClsGrupo grupoActual = grupos.FirstOrDefault(g => g.Nombre == grupo);
+            //Si el grupo existe, se envia el nombre del otro jugador
+            if (grupoActual != null)
+            {
+                //Si el nombre es igual al nombre del jugador 2 , se envia el nombre del jugador 1
+                if (grupoActual.Jugadores[1].Nombre == nombre)
+                {
+                    await Clients.Caller.SendAsync("nombreEnemigo", grupoActual.Jugadores[0].Nombre);
+                }
+                //Si el nombre es igual al nombre del jugador 1 , se envia el nombre del jugador 2
+                else
+                {
+                    await Clients.Caller.SendAsync("nombreEnemigo", grupoActual.Jugadores[1].Nombre);
+                }
+            }
+        }
+
+        //Tirar de la cuerda
+        public async Task tirarCuerda(string grupo, string nombre)
+        {
+            //Esta variable se usa para ver el grupo que estamos usando
+            ClsGrupo grupoActual = grupos.FirstOrDefault(g => g.Nombre == grupo);
+
+            //Si el grupo existe, se envia el nombre del otro jugador
+            if (grupoActual != null)
+            {
+                //Si el jugador 2 es el que ha pulsado, se le suma un punto al jugador 2 y se le resta al jugador 1
+                if (grupoActual.Jugadores[1].Nombre == nombre)
+                {
+                    grupoActual.Jugadores[0].Puntuacion--;
+                    grupoActual.Jugadores[1].Puntuacion++;
+                }
+                //Si el jugador 2 no ha sido el que ha pulsado, se le suma un punto al jugador 1 y se le resta al jugador 2
+                else
+                {
+                    grupoActual.Jugadores[0].Puntuacion++;
+                    grupoActual.Jugadores[1].Puntuacion--;
+                }
+                //Enviamos a los jugadores del grupo los dos jugadores con sus puntuaciones modificadas
+                await Clients.Group(grupo).SendAsync("tirarCuerda", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
+            }
+        }
     }
 }
