@@ -1,5 +1,6 @@
 ﻿using Ent;
 using Microsoft.AspNetCore.SignalR;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Tirar_la_cuerda.Hubs
@@ -8,7 +9,6 @@ namespace Tirar_la_cuerda.Hubs
     {
         //Lista de grupos que existen
         private static List<ClsGrupo> grupos = new List<ClsGrupo>();
-
 
         // Unirse a un grupo
         public async Task JoinGroup(string grupo, string nombre)
@@ -41,7 +41,7 @@ namespace Tirar_la_cuerda.Hubs
             else
             {
                 //Si el grupo tiene dos jugadores, esta lleno
-                if (!String.IsNullOrEmpty(grupoActual.Jugadores[1].Nombre))
+                if (!string.IsNullOrEmpty(grupoActual.Jugadores[1].Nombre))
                 {
                     await Clients.Caller.SendAsync("GrupoLleno");
                 }
@@ -203,6 +203,24 @@ namespace Tirar_la_cuerda.Hubs
                 }
                 //Enviamos a los jugadores del grupo los dos jugadores con sus puntuaciones modificadas
                 await Clients.All.SendAsync("tirarCuerda", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
+            }
+        }
+
+        //Devuelve el nombre del ganador
+        public async Task nombreGanador(string grupo)
+        {
+            //Esta variable se usa para ver el grupo que estamos usando
+            ClsGrupo grupoActual = grupos.FirstOrDefault(g => g.Nombre == grupo);
+
+            //Si la puntuacion del jugador 2 es mayor que la del jugador 1, se envia el nombre del jugador 2
+            if (grupoActual.Jugadores[1].Puntuacion > grupoActual.Jugadores[0].Puntuacion)
+            {
+                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[0].Nombre);
+            }
+            //Si la puntuacion del jugador 1 es mayor que la del jugador 2, se envia el nombre del jugador 1
+            else
+            {
+                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre);
             }
         }
     }

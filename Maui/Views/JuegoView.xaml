@@ -3,80 +3,59 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Maui.Views.JuegoView"
              xmlns:local="clr-namespace:Maui.ViewModels"
-             Title="Batalla de Cuerda">
+             Title="Tira de la Cuerda"
+             BackgroundColor="{Binding EsGanador, Converter={StaticResource BoolToBackgroundColorConverter}}">
 
     <ContentPage.BindingContext>
         <local:JuegoVM />
     </ContentPage.BindingContext>
 
-    <Grid Padding="30" BackgroundColor="#F5F5F5">
+    <Grid Padding="10" RowDefinitions="Auto, Auto, *, Auto">
 
-        <!-- ENCABEZADO CON NOMBRE DE LA SALA -->
-        <Frame BackgroundColor="#263238" Padding="20" CornerRadius="12"
-               HasShadow="True" HorizontalOptions="Fill">
+        <Frame BackgroundColor="#FF5722" Padding="15" CornerRadius="15"
+               HasShadow="True" HorizontalOptions="Fill" VerticalOptions="Start">
             <Label Text="{Binding Jugador.Grupo}"
                    FontSize="28" TextColor="White"
                    FontAttributes="Bold" HorizontalOptions="Center"/>
         </Frame>
 
-        <!-- Contenedor de la interfaz -->
-        <Frame CornerRadius="12" BackgroundColor="White" Padding="20" Margin="15"
-               HasShadow="True" VerticalOptions="CenterAndExpand">
-
-            <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="*, Auto, *">
-
-                <!-- Jugador -->
-                <VerticalStackLayout Grid.Row="0" Grid.Column="0" HorizontalOptions="Start">
-                    <Image Source="avatar_jugador.png" WidthRequest="70" HeightRequest="70"/>
-                    <Label Text="Tú" FontSize="22" FontAttributes="Bold"
-                           TextColor="{Binding EsGanador, Converter={StaticResource BoolToColorConverter}}"/>
-                </VerticalStackLayout>
-
-                <!-- Texto VS -->
-                <Label Text="VS" FontSize="24" TextColor="DarkRed" FontAttributes="Bold"
-                       Grid.Row="0" Grid.Column="1" HorizontalOptions="Center"/>
-
-                <!-- Enemigo -->
-                <VerticalStackLayout Grid.Row="0" Grid.Column="2" HorizontalOptions="End">
-                    <Image Source="avatar_enemigo.png" WidthRequest="70" HeightRequest="70"/>
-                    <Label Text="{Binding NombreEnemigo}" FontSize="22" FontAttributes="Bold"
-                           TextColor="{Binding EsPerdedor, Converter={StaticResource BoolToColorConverter}}"/>
-                </VerticalStackLayout>
-
-                <!-- Imagen de la cuerda más grande -->
-                <Image Source="cuerda.png"
-                       Grid.Row="1" Grid.ColumnSpan="3"
-                       Aspect="Fill" HorizontalOptions="Fill" VerticalOptions="Center"
-                       TranslationX="{Binding Jugador.Puntuacion, Mode=TwoWay}"
-                       WidthRequest="600" HeightRequest="250"/>
-
-                <!-- BARRA DE PROGRESO PROFESIONAL -->
-                <Frame Grid.Row="2" Grid.ColumnSpan="3"
-                       BackgroundColor="#E0E0E0" CornerRadius="10"
-                       Padding="5" HorizontalOptions="Fill" Margin="10">
-                    <ProgressBar Progress="{Binding Jugador.Puntuacion, Mode=TwoWay}"
-                                 ProgressColor="Red" BackgroundColor="Green"
-                                 HeightRequest="14"/>
-                </Frame>
-
-                <!-- Marca cuando la puntuación es 120 -->
-                <Image Source="marca.png" 
-                       WidthRequest="45" HeightRequest="45" 
-                       IsVisible="{Binding PuntuacionMaxima}" 
-                       Grid.Row="3" Grid.ColumnSpan="3"
-                       HorizontalOptions="Center" VerticalOptions="Center"/>
-
-                <!-- BOTÓN AL MEDIO Y MÁS GRANDE -->
-                <Button Text="¡Tirar de la cuerda!" 
-                        FontSize="28" TextColor="White" 
-                        BackgroundColor="#D84315" CornerRadius="25"
-                        Padding="20" HorizontalOptions="Center" 
-                        VerticalOptions="Center" Grid.Row="4" Grid.ColumnSpan="3"
-                        Command="{Binding CmdTirarCuerda}"
-                        WidthRequest="350" HeightRequest="90"/>
-            </Grid>
+        <Frame BackgroundColor="#E0E0E0" CornerRadius="10" Padding="5" 
+               HorizontalOptions="Fill" Margin="10" HasShadow="True" Grid.Row="1">
+            <ProgressBar Progress="{Binding Jugador.Puntuacion, Mode=TwoWay}"
+                         ProgressColor="Red" BackgroundColor="Green"
+                         HeightRequest="18" />
         </Frame>
 
-    </Grid>
+        <Grid Grid.Row="2" RowDefinitions="Auto, *" ColumnDefinitions="Auto, *, Auto" VerticalOptions="FillAndExpand" Padding="10">
 
+            <VerticalStackLayout Grid.Row="0" Grid.Column="0" HorizontalOptions="Start">
+                <Image Source="avatar_jugador.png" WidthRequest="70" HeightRequest="70"/>
+                <Label Text="Tú" FontSize="22" FontAttributes="Bold"/>
+            </VerticalStackLayout>
+
+            <!-- Texto VS -->
+            <Label Text="VS" FontSize="24" TextColor="DarkRed" FontAttributes="Bold"
+                  Grid.Row="0" Grid.Column="1" HorizontalOptions="Center"/>
+
+            <!-- Enemigo -->
+            <VerticalStackLayout Grid.Row="0" Grid.Column="2" HorizontalOptions="End">
+                <Image Source="avatar_enemigo.png" WidthRequest="70" HeightRequest="70"/>
+                <Label Text="{Binding NombreEnemigo}" FontSize="22" FontAttributes="Bold"/>
+            </VerticalStackLayout>
+
+            <Image Source="cuerda.png"
+                   Grid.Column="1"
+                   Aspect="AspectFit" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                   TranslationX="{Binding Jugador.Puntuacion, Mode=TwoWay}"/>
+
+
+        </Grid>
+
+        <Button Text="¡TIRAR DE LA CUERDA!" 
+                FontSize="26" TextColor="White" 
+                BackgroundColor="#C62828" CornerRadius="25"
+                Padding="20" HorizontalOptions="FillAndExpand" 
+                VerticalOptions="End" Command="{Binding CmdTirarCuerda}"
+                HeightRequest="85" Grid.Row="3"/>
+    </Grid>
 </ContentPage>

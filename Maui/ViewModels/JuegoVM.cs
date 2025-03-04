@@ -150,6 +150,18 @@ namespace Maui.ViewModels
                     jugador.Puntuacion = Jugador2.Puntuacion;
                     NotifyPropertyChanged("Jugador");
                 }
+
+                //Comprobar para ver que un jugador no ha ganado o perdido, es decir que si la partida ha terminado
+                if (jugador.Puntuacion >= puntuacionMaxima || jugador.Puntuacion <= -puntuacionMaxima)
+                {
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        await Shell.Current.GoToAsync("///FinalView", true, new Dictionary<string, object>
+                        {
+                            { "jugador", jugador }
+                        });
+                    });
+                }
             });
         }
 

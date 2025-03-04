@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Maui.Views.MainPage"
              xmlns:vm="clr-namespace:Maui.ViewModels"
-             BackgroundColor="#E8F0F7"
+             BackgroundColor="#DCF2F1"
              Padding="20">
 
     <ContentPage.BindingContext>
@@ -12,9 +12,9 @@
 
     <Grid>
         <!-- Imagen de Fondo -->
-        <Image Source="images/tiracuerda.png"
+        <Image Source="tiracuerda.png"
                Aspect="AspectFill"
-               Opacity="0.2"
+               Opacity="0.1"
                HorizontalOptions="FillAndExpand"
                VerticalOptions="FillAndExpand"
                AbsoluteLayout.LayoutFlags="All"
@@ -24,66 +24,66 @@
             <VerticalStackLayout Spacing="25">
                 <!-- Título -->
                 <Label Text="Tirar la cuerda"
-                       FontSize="30"
+                       FontSize="32"
                        FontAttributes="Bold"
-                       TextColor="#0056b3"
+                       TextColor="#0A3871"
                        HorizontalOptions="Center" />
 
                 <Label Text="Ingresa el código de la partida"
                        FontSize="18"
-                       TextColor="#555"
+                       TextColor="#444"
                        HorizontalOptions="Center" />
 
                 <!-- Entradas -->
                 <Frame BackgroundColor="White"
-                       CornerRadius="12"
+                       CornerRadius="15"
                        Padding="20"
                        HasShadow="True"
-                       Opacity="0.95">
+                       Opacity="0.98">
                     <VerticalStackLayout Spacing="15">
                         <Entry Text="{Binding Grupo}"
                                Placeholder="Código de la partida"
-                               PlaceholderColor="#888"
-                               FontSize="16"
-                               BackgroundColor="#F0F4F8"
+                               PlaceholderColor="#777"
+                               FontSize="18"
+                               BackgroundColor="#EEF7FF"
                                HorizontalOptions="FillAndExpand" />
 
                         <Entry Text="{Binding Nombre}"
                                Placeholder="Nombre"
-                               PlaceholderColor="#888"
-                               FontSize="16"
-                               BackgroundColor="#F0F4F8"
+                               PlaceholderColor="#777"
+                               FontSize="18"
+                               BackgroundColor="#EEF7FF"
                                HorizontalOptions="FillAndExpand" />
                     </VerticalStackLayout>
                 </Frame>
 
                 <!-- Botones -->
-                <VerticalStackLayout Spacing="12">
+                <VerticalStackLayout Spacing="14">
                     <Button Text="Entrar"
                             Command="{Binding CmdUnirGrupo}"
                             BackgroundColor="#007AFF"
                             TextColor="White"
-                            FontSize="18"
-                            Padding="14"
-                            CornerRadius="12"
+                            FontSize="20"
+                            Padding="16"
+                            CornerRadius="14"
                             HorizontalOptions="FillAndExpand" />
 
                     <Button Text="Salir"
                             Command="{Binding CmdSalirGrupo}"
-                            BackgroundColor="#FF3B30"
+                            BackgroundColor="#D32F2F"
                             TextColor="White"
-                            FontSize="18"
-                            Padding="14"
-                            CornerRadius="12"
+                            FontSize="20"
+                            Padding="16"
+                            CornerRadius="14"
                             HorizontalOptions="FillAndExpand" />
 
                     <Button Text="Listo"
                             Command="{Binding CmdPreparado}"
-                            BackgroundColor="#34C759"
+                            BackgroundColor="Red"
                             TextColor="White"
-                            FontSize="18"
-                            Padding="14"
-                            CornerRadius="12"
+                            FontSize="20"
+                            Padding="16"
+                            CornerRadius="14"
                             HorizontalOptions="FillAndExpand"
                             Clicked="OnButtonClicked" />
                 </VerticalStackLayout>
@@ -92,14 +92,14 @@
                 <Label Text="Jugadores en la partida:"
                        FontSize="22"
                        FontAttributes="Bold"
-                       TextColor="#0056b3"
+                       TextColor="#0A3871"
                        HorizontalOptions="Start" />
 
                 <Frame BackgroundColor="White"
-                       CornerRadius="12"
+                       CornerRadius="15"
                        Padding="12"
                        HasShadow="True"
-                       Opacity="0.95">
+                       Opacity="0.98">
                     <ListView ItemsSource="{Binding Jugadores}" BackgroundColor="White">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -108,9 +108,9 @@
                                         <Label Text="{Binding Nombre}"
                                                FontSize="18"
                                                FontAttributes="Bold"
-                                               TextColor="#333" />
+                                               TextColor="#222" />
                                         <Label Text="{Binding Listo}"
-                                               FontSize="14"
+                                               FontSize="16"
                                                TextColor="#666" />
                                     </StackLayout>
                                 </ViewCell>

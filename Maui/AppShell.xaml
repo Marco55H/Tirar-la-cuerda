@@ -13,9 +13,14 @@
         Route="MainPage" />
     
     <ShellContent  
-        Title="Editar" 
+        Title="Juego" 
         ContentTemplate="{DataTemplate local:JuegoView}" 
         Route="JuegoView" 
         FlyoutItemIsVisible="False"/>
 
+    <ShellContent  
+        Title="Final" 
+        ContentTemplate="{DataTemplate local:FinalView}" 
+        Route="FinalView" 
+        FlyoutItemIsVisible="False"/>
 </Shell>

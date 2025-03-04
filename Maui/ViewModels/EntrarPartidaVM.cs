@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Maui.ViewModels
 {
+    [QueryProperty(nameof(Nombre), "jugador")]
     public class EntrarPartidaVM : INotifyPropertyChanged
     {
         #region Atributos

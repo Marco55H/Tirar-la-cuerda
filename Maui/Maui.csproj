@@ -59,6 +59,8 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\cuerda.png" />
 	  <None Remove="Resources\Images\marca.png" />
+	  <None Remove="Resources\Images\trofeo.png" />
+	  <None Remove="Resources\Images\trsite.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -73,6 +75,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\FinalView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\JuegoView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
