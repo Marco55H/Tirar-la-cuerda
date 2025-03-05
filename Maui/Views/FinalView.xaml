@@ -3,57 +3,96 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Maui.ViewModels"
              x:Class="Maui.Views.FinalView"
-             BackgroundColor="#1E1E1E">
+             BackgroundColor="#121212"
+             Padding="30">
 
     <ContentPage.BindingContext>
         <vm:FinalVM />
     </ContentPage.BindingContext>
 
-    <VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
-        
-        <Label Text="{Binding PartidasJugadas}"
-               FontSize="28"
-               FontAttributes="Bold"
-               TextColor="#FFD700"
-               HorizontalOptions="Center"/>
-        
-        <Label Text="Resultado de la partida"
-               FontSize="28"
+    <VerticalStackLayout Spacing="25" HorizontalOptions="Center" VerticalOptions="Center">
+
+        <!-- Título -->
+        <Label Text="Resumen de la Partida"
+               FontSize="32"
                FontAttributes="Bold"
                TextColor="#FFD700"
                HorizontalOptions="Center"/>
 
-        <Frame CornerRadius="15" Padding="20" BackgroundColor="#333">
-            <Label Text="{Binding Jugador.Nombre}"
-                   FontSize="22"
-                   TextColor="#FFFFFF"
-                   FontAttributes="Bold"
+        <BoxView HeightRequest="2" BackgroundColor="#FFD700" WidthRequest="80" HorizontalOptions="Center"/>
+
+        <!-- Estadísticas -->
+        <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
+            <Label Text="Partidas Jugadas"
+                   FontSize="18"
+                   TextColor="White"
                    HorizontalOptions="Center"/>
-        </Frame>
+            <Label Text="{Binding PartidasJugadas}"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="#FFD700"
+                   HorizontalOptions="Center"/>
 
-        <Frame CornerRadius="15" Padding="20" BackgroundColor="#444">
+            <HorizontalStackLayout Spacing="30">
+                <VerticalStackLayout HorizontalOptions="Center">
+                    <Label Text="Tus Puntos"
+                           FontSize="18"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="{Binding PuntosJugador}"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#4CAF50"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout HorizontalOptions="Center">
+                    <Label Text="Puntos Rival"
+                           FontSize="18"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="{Binding PuntosEnemigo}"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="Red"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <BoxView HeightRequest="2" BackgroundColor="#FFD700" WidthRequest="80" HorizontalOptions="Center"/>
+
+        <!-- Mensaje del ganador -->
+        <Frame CornerRadius="15" Padding="20" BackgroundColor="#222"
+               BorderColor="#FFD700" HasShadow="True">
             <Label Text="{Binding MensajeGanador}"
-                   FontSize="20"
-                   TextColor="#FFFFFF"
+                   FontSize="22"
+                   TextColor="White"
+                   FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   FontAttributes="Bold"/>
+                   VerticalOptions="Center"/>
         </Frame>
 
-        <Button Text="Volver al inicio"
-                Command="{Binding CmdVolver}"
-                BackgroundColor="#007ACC"
-                TextColor="White"
-                FontSize="18"
-                Padding="15"
-                CornerRadius="10"/>
+        <!-- Botones -->
+        <HorizontalStackLayout Spacing="20">
+            <Button Text="Volver al inicio"
+                    Command="{Binding CmdVolver}"
+                    BackgroundColor="#007ACC"
+                    TextColor="White"
+                    FontSize="18"
+                    Padding="15"
+                    CornerRadius="12"
+                    WidthRequest="150"/>
 
-        <Button Text="Revancha"
-                Command="{Binding CmdRevancha}"
-                BackgroundColor="Orange"
-                TextColor="White"
-                FontSize="18"
-                Padding="15"
-                CornerRadius="10"/>
+            <Button Text="Revancha"
+                    Command="{Binding CmdRevancha}"
+                    BackgroundColor="Orange"
+                    TextColor="White"
+                    FontSize="18"
+                    Padding="15"
+                    CornerRadius="12"
+                    WidthRequest="150"/>
+        </HorizontalStackLayout>
+
     </VerticalStackLayout>
 </ContentPage>

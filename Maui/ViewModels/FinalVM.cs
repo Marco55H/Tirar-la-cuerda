@@ -161,7 +161,8 @@ namespace Maui.ViewModels
             }
 
         /// <summary>
-        /// El Hub devuelve el nombre del ganador para ponerlo en al UI
+        /// El Hub devuelve el nombre del ganador para ponerlo en al UI, ademas de la puntuación de cada uno, si pierde se modificaran los puntos del enemigo, 
+        /// si gana los tuyos, pero envio los puntos de los dos jugadores ya que si envio uno tengo que ver cual es y demas
         /// </summary>
         private void nombreGanadorEncontrado(string nombre, int puntos1, int puntos2)
         {
@@ -169,15 +170,20 @@ namespace Maui.ViewModels
             {
                 if(nombre == jugador.Nombre)
                 {
-                    mensajeGanador = "Enhorabuena, ganaste la partida!!!";
+                    mensajeGanador = "Enhorabuena, ganaste la partida!!!";                    
+                    puntosJugador = puntos1/2;
+                    puntosEnemigo = puntos2 / 2;
                 }
                 else
                 {
                     mensajeGanador = "Te ganó " + nombre + " más suerte la próxima vez";
+                    puntosJugador = puntos2 / 2;
+                    puntosEnemigo = puntos1 / 2;
                 }
 
-                puntos1 = puntosJugador;
-                puntos2 = puntosEnemigo;
+                //Si el jugador es igual al nombre devuelto, los puntos del jugador serán los del jugador 1 del HUB, los puntos del enemigo serán los del jugador 2 del HUB,
+                //entre dos , ya que cuando son dos jugadores, llamo dos veces a sumar puntuacion en el HUB
+                
 
                 NotifyPropertyChanged("PuntosJugador");
                 NotifyPropertyChanged("PuntosEnemigo");

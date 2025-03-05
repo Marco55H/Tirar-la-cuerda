@@ -85,7 +85,7 @@ namespace Tirar_la_cuerda.Hubs
             //Si el grupo existe habrá que borrarlo de la lista de grupos y tendremos que borrar los datos para la UI
             if (grupoActual != null)
             {
-
+                grupoActual.NumeroJuegos = 0;   
 
                 //Si el nombre es igual al nombre del jugador 2 , se borra el jugador 2 de la lista de jugadores del grupo,
                 //si es el creador del grupo el que se cambia, es decir, el jugador 1, eliminamos aese jugador
