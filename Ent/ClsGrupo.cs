@@ -13,6 +13,7 @@ namespace Ent
     {
         private List<ClsJugador> jugadores = new List<ClsJugador>();
         private string nombre;
+        private int numeroJuegos;
 
         public List<ClsJugador> Jugadores 
         { get => jugadores; set => jugadores = value; }
@@ -20,12 +21,16 @@ namespace Ent
         public string Nombre
         { get => nombre; set => nombre = value; }
 
+        public int NumeroJuegos
+        { get => numeroJuegos; set => numeroJuegos = value; }
+
         public ClsGrupo() { }
 
 
         public ClsGrupo(string nombre)
         {
             this.nombre = nombre;
+            numeroJuegos = 0;
         }
 
         /// <summary>

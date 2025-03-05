@@ -22,7 +22,6 @@ namespace Maui.ViewModels
         private int puntuacionMaxima;
         #endregion
 
-
         #region Propiedades  
         
         public int PuntuacionMaxima

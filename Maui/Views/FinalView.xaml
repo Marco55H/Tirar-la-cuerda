@@ -10,7 +10,13 @@
     </ContentPage.BindingContext>
 
     <VerticalStackLayout Padding="30" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
-
+        
+        <Label Text="{Binding PartidasJugadas}"
+               FontSize="28"
+               FontAttributes="Bold"
+               TextColor="#FFD700"
+               HorizontalOptions="Center"/>
+        
         <Label Text="Resultado de la partida"
                FontSize="28"
                FontAttributes="Bold"
@@ -37,6 +43,14 @@
         <Button Text="Volver al inicio"
                 Command="{Binding CmdVolver}"
                 BackgroundColor="#007ACC"
+                TextColor="White"
+                FontSize="18"
+                Padding="15"
+                CornerRadius="10"/>
+
+        <Button Text="Revancha"
+                Command="{Binding CmdRevancha}"
+                BackgroundColor="Orange"
                 TextColor="White"
                 FontSize="18"
                 Padding="15"

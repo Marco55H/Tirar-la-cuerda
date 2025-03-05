@@ -25,7 +25,7 @@ namespace Tirar_la_cuerda.Hubs
                 ClsJugador jugador1 = new ClsJugador();
 
                 //Inicializo el primer jugador para meterlo en el grupo
-                jugador1 = new ClsJugador(nombre, grupo, 0, false);
+                jugador1 = new ClsJugador(nombre, grupo, 0, false, 0);
 
                 ClsJugador jugador2 = new ClsJugador();
                 grupoActual.AddJugador(jugador1);
@@ -103,7 +103,7 @@ namespace Tirar_la_cuerda.Hubs
 
 
                 //Se envia a la vista los jugadores que hay en el grupo
-                await Clients.Group(grupo).SendAsync("jugadoresDelGrupo", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
+                await Clients.All.SendAsync("jugadoresDelGrupo", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
 
                 //Si los dos jugadores estan vacios, se elimina el grupo
                 if (grupoActual.Jugadores[0].Nombre == "" && grupoActual.Jugadores[1].Nombre == "")
@@ -164,6 +164,7 @@ namespace Tirar_la_cuerda.Hubs
         {
             //Esta variable se usa para ver el grupo que estamos usando
             ClsGrupo grupoActual = grupos.FirstOrDefault(g => g.Nombre == grupo);
+
             //Si el grupo existe, se envia el nombre del otro jugador
             if (grupoActual != null)
             {
@@ -215,13 +216,55 @@ namespace Tirar_la_cuerda.Hubs
             //Si la puntuacion del jugador 2 es mayor que la del jugador 1, se envia el nombre del jugador 2
             if (grupoActual.Jugadores[1].Puntuacion > grupoActual.Jugadores[0].Puntuacion)
             {
-                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[0].Nombre);
+                grupoActual.Jugadores[0].Victorias++;
+                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[0].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);
             }
             //Si la puntuacion del jugador 1 es mayor que la del jugador 2, se envia el nombre del jugador 1
             else
-            {
-                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre);
+            {   
+                grupoActual.Jugadores[1].Victorias++;
+                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);          
             }
+
+            //Se envia a la vista las puntuaciones de los jugadores
+            await Clients.All.SendAsync("puntuaciones");
+
+            //Al terminar el juego, se reinician los estados de listo
+            grupoActual.Jugadores[0].Listo = false;
+            grupoActual.Jugadores[1].Listo = false;
+        }
+
+        public async Task Revancha(string grupo, string nombre)
+        {
+            //Esta variable se usa para ver el grupo que estamos usando
+            ClsGrupo grupoActual = grupos.FirstOrDefault(g => g.Nombre == grupo);
+
+            //Al reiniciar el juego, se reinician las puntuaciones
+            grupoActual.Jugadores[0].Puntuacion = 0;
+            grupoActual.Jugadores[1].Puntuacion = 0;
+
+            //Si el jugador 2 es el que ha pulsado, la revancha se pone a true
+            if (grupoActual.Jugadores[1].Nombre == nombre)
+            {
+                grupoActual.Jugadores[1].Listo = true;
+            }
+            //Si el jugador 1 es el que ha pulsado, la revancha se pone a true
+            else
+            {
+                grupoActual.Jugadores[0].Listo = true;
+            }
+
+            //Si los dos jugadores estan listos, se inicia el juego
+            if (grupoActual.Jugadores[0].Listo && grupoActual.Jugadores[1].Listo)
+            {
+                await Clients.Group(grupo).SendAsync("IniciarJuego");
+                //Se dice que se ha jugado un juego mas
+                grupoActual.NumeroJuegos++;
+            }
+
+            //Se envia a la vista el numero de juegos jugados
+            await Clients.All.SendAsync("partidasJugadas", grupoActual.NumeroJuegos);
+
         }
     }
 }

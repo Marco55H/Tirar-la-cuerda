@@ -20,6 +20,10 @@ namespace Maui.ViewModels
         private string mensajeGanador;
         private readonly HubConnection _connection;
         private DelegateCommand cmdVolver;
+        private DelegateCommand cmdRevancha;
+        private string partidasJugadas;
+        private int puntosJugador;
+        private int puntosEnemigo;
         #endregion
 
         #region Propiedades 
@@ -35,6 +39,26 @@ namespace Maui.ViewModels
             }
         }
 
+        public int PuntosJugador
+        {
+            get { return puntosJugador; }
+            set
+            {
+                puntosJugador = value;
+                NotifyPropertyChanged("PuntosJugador");
+            }
+        }
+
+        public int PuntosEnemigo
+        {
+            get { return puntosEnemigo; }
+            set
+            {
+                puntosEnemigo = value;
+                NotifyPropertyChanged("PuntosEnemigo");
+            }
+        }
+
         public string MensajeGanador
         {
             get { return mensajeGanador; }
@@ -47,9 +71,26 @@ namespace Maui.ViewModels
             }
         }
 
+        public string PartidasJugadas
+        {
+            get
+            {
+                return partidasJugadas;
+            }
+            set
+            {
+                partidasJugadas = value;
+                NotifyPropertyChanged("PartidasJugadas");
+            }
+        }
         public DelegateCommand CmdVolver
         {
             get { return cmdVolver; }
+        }
+
+        public DelegateCommand CmdRevancha
+        {
+            get { return cmdRevancha; }
         }
         #endregion
 
@@ -58,16 +99,24 @@ namespace Maui.ViewModels
         {
             _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
 
-            _connection.On<string>("nombreGanador", nombreGanadorEncontrado);
+            _connection.On<string, int ,int>("nombreGanador", nombreGanadorEncontrado);
+            _connection.On("IniciarJuego", empezar);
+            _connection.On<int>("partidasJugadas", partidasjugadas);
 
             // Conectarse y suscribirse
             esperarConexion();
 
+
+            partidasJugadas = "Partida numero "+0;
             cmdVolver = new DelegateCommand(cmdVolver_Execute, true);
+            cmdRevancha = new DelegateCommand(cmdRevancha_Execute, true);
         }
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Metodo que me mandará a la ventana de inicio
+        /// </summary>
         private async void cmdVolver_Execute()
         {
             await _connection.InvokeCoreAsync("LeaveGroup", args:
@@ -79,6 +128,20 @@ namespace Maui.ViewModels
             );
             
             await Shell.Current.GoToAsync($"//MainPage?jugador={jugador.Nombre}");
+        }
+
+        /// <summary>
+        /// Metodo que inicia la partida, me mandará a la ventana de la partida en forma de revancha
+        /// </summary>
+        private async void cmdRevancha_Execute()
+        {
+            await _connection.InvokeCoreAsync("Revancha", args:
+            new[]
+                 {
+                    jugador.Grupo,
+                    jugador.Nombre
+                 }
+            );
         }
         #endregion
 
@@ -100,7 +163,7 @@ namespace Maui.ViewModels
         /// <summary>
         /// El Hub devuelve el nombre del ganador para ponerlo en al UI
         /// </summary>
-        private void nombreGanadorEncontrado(string nombre)
+        private void nombreGanadorEncontrado(string nombre, int puntos1, int puntos2)
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -112,7 +175,42 @@ namespace Maui.ViewModels
                 {
                     mensajeGanador = "Te ganó " + nombre + " más suerte la próxima vez";
                 }
+
+                puntos1 = puntosJugador;
+                puntos2 = puntosEnemigo;
+
+                NotifyPropertyChanged("PuntosJugador");
+                NotifyPropertyChanged("PuntosEnemigo");
                 NotifyPropertyChanged("MensajeGanador");
+            });
+        }
+
+        /// <summary>
+        /// Metodo que me mostrará las partidas jugadas
+        /// </summary>
+        /// <param name="_partidasJugadas"></param>
+        private void partidasjugadas(int _partidasJugadas)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                partidasJugadas="Partida numero : "+_partidasJugadas;
+                NotifyPropertyChanged("PartidasJugadas");
+            });
+        }
+
+        /// <summary>
+        /// Metodo que inicia la partida, me mandará a la ventana de la partida
+        /// </summary>
+        private async void empezar()
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var diccionario = new Dictionary<string, object>
+                {
+                {"jugador", jugador}
+                };
+
+                await Shell.Current.GoToAsync("///JuegoView", diccionario);
             });
         }
 
