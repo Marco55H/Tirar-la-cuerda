@@ -171,14 +171,14 @@ namespace Maui.ViewModels
                 if(nombre == jugador.Nombre)
                 {
                     mensajeGanador = "Enhorabuena, ganaste la partida!!!";                    
-                    puntosJugador = puntos1/2;
-                    puntosEnemigo = puntos2 / 2;
+                    puntosJugador = puntos2 / 2 ;
+                    puntosEnemigo = puntos1 / 2 ;
                 }
                 else
                 {
                     mensajeGanador = "Te ganó " + nombre + " más suerte la próxima vez";
-                    puntosJugador = puntos2 / 2;
-                    puntosEnemigo = puntos1 / 2;
+                    puntosJugador = puntos1 / 2 ;
+                    puntosEnemigo = puntos2 / 2 ;
                 }
 
                 //Si el jugador es igual al nombre devuelto, los puntos del jugador serán los del jugador 1 del HUB, los puntos del enemigo serán los del jugador 2 del HUB,

@@ -74,7 +74,7 @@
         </Frame>
 
         <!-- Botones -->
-        <HorizontalStackLayout Spacing="20">
+        <HorizontalStackLayout Spacing="20" HorizontalOptions="CenterAndExpand">
             <Button Text="Volver al inicio"
                     Command="{Binding CmdVolver}"
                     BackgroundColor="#007ACC"

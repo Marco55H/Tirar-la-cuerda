@@ -77,15 +77,31 @@
                             CornerRadius="14"
                             HorizontalOptions="FillAndExpand" />
 
-                    <Button Text="Listo"
-                            Command="{Binding CmdPreparado}"
-                            BackgroundColor="Red"
-                            TextColor="White"
-                            FontSize="20"
-                            Padding="16"
-                            CornerRadius="14"
-                            HorizontalOptions="FillAndExpand"
-                            Clicked="OnButtonClicked" />
+                    <Button x:Name="BotonListo"
+                        Text="Listo"
+                        Command="{Binding CmdPreparado}"
+                        BackgroundColor="Red"
+                        TextColor="White"
+                        FontSize="20"
+                        Padding="16"
+                        CornerRadius="14"
+                        HorizontalOptions="FillAndExpand">
+
+                        <Button.Triggers>
+                            <!-- Corrige el Binding aquí, asegúrate de que "Jugador" esté correctamente referenciado -->
+                            <DataTrigger TargetType="Button" Binding="{Binding Listo}" Value="True">
+                                <Setter Property="BackgroundColor" Value="Green"/>
+                            </DataTrigger>
+
+                            <DataTrigger TargetType="Button" Binding="{Binding Listo}" Value="False">
+                                <Setter Property="BackgroundColor" Value="Red"/>
+                            </DataTrigger>
+                        </Button.Triggers>
+
+                    </Button>
+
+
+
                 </VerticalStackLayout>
 
                 <!-- Lista de Jugadores -->
@@ -105,18 +121,33 @@
                             <DataTemplate>
                                 <ViewCell>
                                     <StackLayout Padding="12">
+                                        
+                                        <!-- Label del Nombre -->
                                         <Label Text="{Binding Nombre}"
-                                               FontSize="18"
-                                               FontAttributes="Bold"
-                                               TextColor="#222" />
-                                        <Label Text="{Binding Listo}"
-                                               FontSize="16"
-                                               TextColor="#666" />
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="Black">
+                                        </Label>
+                                        
+                                        <!-- Label del Nombre -->
+                                        <Label Text="Listo"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="Red">
+
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding Listo}" Value="True">
+                                                    <Setter Property="TextColor" Value="Green"/>
+                                                </DataTrigger>
+                                            </Label.Triggers>
+
+                                        </Label>
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+
                 </Frame>
 
                 <!-- Mensaje de Error -->

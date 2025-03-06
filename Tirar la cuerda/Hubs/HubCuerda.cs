@@ -82,6 +82,8 @@ namespace Tirar_la_cuerda.Hubs
             //Esta variable se usa para ver el grupo que estamos usando
             ClsGrupo grupoActual = grupos.FirstOrDefault(g => g.Nombre == grupo);
 
+            //grupoActual.NumeroJuegos = 0;
+
             //Si el grupo existe habrá que borrarlo de la lista de grupos y tendremos que borrar los datos para la UI
             if (grupoActual != null)
             {
@@ -217,17 +219,15 @@ namespace Tirar_la_cuerda.Hubs
             if (grupoActual.Jugadores[1].Puntuacion > grupoActual.Jugadores[0].Puntuacion)
             {
                 grupoActual.Jugadores[0].Victorias++;
-                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[0].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);
             }
             //Si la puntuacion del jugador 1 es mayor que la del jugador 2, se envia el nombre del jugador 1
             else
             {   
                 grupoActual.Jugadores[1].Victorias++;
-                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);          
             }
 
-            //Se envia a la vista las puntuaciones de los jugadores
-            await Clients.All.SendAsync("puntuaciones");
+            //Se envia a la vista el nombre del ganador y los puntos de los dos jugadores
+            await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);
 
             //Al terminar el juego, se reinician los estados de listo
             grupoActual.Jugadores[0].Listo = false;

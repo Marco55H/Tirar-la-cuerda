@@ -18,11 +18,20 @@ namespace Maui.ViewModels
         private DelegateCommand cmdSalirGrupo;
         private DelegateCommand cmdPreparado;
         private string llenoORepetido;
-        private List<ClsGrupo> grupos;
         private bool estaEnGrupo;
+        private bool listo;
         #endregion
 
         #region Propiedades 
+        public bool Listo
+        {
+            get { return listo; }
+            set
+            {
+                listo = value;
+                NotifyPropertyChanged("Listo");
+            }
+        }
 
         public ClsJugador Jugador
         {
@@ -120,7 +129,7 @@ namespace Maui.ViewModels
             cmdSalirGrupo = new DelegateCommand(cmdSalirGrupo_Execute, () => EstaEnGrupo);
             cmdPreparado = new DelegateCommand(cmdPreparado_Execute, () => EstaEnGrupo);
 
-            grupos = new List<ClsGrupo>();
+            listo=false;
             jugador = new ClsJugador();
             jugadores = new ObservableCollection<ClsJugador>();
         }
@@ -137,7 +146,10 @@ namespace Maui.ViewModels
                 jugador.Grupo,
                 jugador.Nombre
                 }
-            );
+           );
+
+            listo = !listo;
+            NotifyPropertyChanged("Listo");
         }
 
         //Comprobar si se puede ejecutar el comando, si no hay nada vacio, se puede ejecutar
@@ -150,6 +162,12 @@ namespace Maui.ViewModels
                 sePuedeEjecutar = true;
                 
             }
+
+            if(EstaEnGrupo)
+            {
+                sePuedeEjecutar = false;
+            }
+
             return sePuedeEjecutar;
         }
 
@@ -164,6 +182,8 @@ namespace Maui.ViewModels
                 }
             );
             EstaEnGrupo = false;
+            NotifyPropertyChanged("EstaEnGrupo");
+            cmdUnirGrupo.RaiseCanExecuteChanged();
         }
 
         //Ejecutar el comando, añadimos al grupoa
@@ -177,6 +197,8 @@ namespace Maui.ViewModels
                 }
             );
             EstaEnGrupo = true;
+            NotifyPropertyChanged("EstaEnGrupo");
+            cmdUnirGrupo.RaiseCanExecuteChanged();
         }
         #endregion
 
