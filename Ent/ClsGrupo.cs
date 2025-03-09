@@ -24,13 +24,13 @@ namespace Ent
         public int NumeroJuegos
         { get => numeroJuegos; set => numeroJuegos = value; }
 
-        public ClsGrupo() { }
+        public ClsGrupo() { numeroJuegos = 1; }
 
 
         public ClsGrupo(string nombre)
         {
             this.nombre = nombre;
-            numeroJuegos = 0;
+            numeroJuegos = 1;
         }
 
         /// <summary>

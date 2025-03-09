@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Maui.Views.JuegoView"
              xmlns:local="clr-namespace:Maui.ViewModels"
-             Title="Tira de la Cuerda"
-             BackgroundColor="{Binding EsGanador, Converter={StaticResource BoolToBackgroundColorConverter}}">
+             Title="Tira de la Cuerda">
 
     <ContentPage.BindingContext>
         <local:JuegoVM />

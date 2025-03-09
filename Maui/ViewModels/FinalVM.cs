@@ -24,6 +24,7 @@ namespace Maui.ViewModels
         private string partidasJugadas;
         private int puntosJugador;
         private int puntosEnemigo;
+        private string mensajeRevanchaORendirse;
         #endregion
 
         #region Propiedades 
@@ -83,6 +84,12 @@ namespace Maui.ViewModels
                 NotifyPropertyChanged("PartidasJugadas");
             }
         }
+
+        public string MensajeRevanchaORendirse
+        {
+            get { return mensajeRevanchaORendirse; }
+        }
+
         public DelegateCommand CmdVolver
         {
             get { return cmdVolver; }
@@ -97,17 +104,20 @@ namespace Maui.ViewModels
         #region Contructor
         public FinalVM()
         {
-            _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
+            _connection = new HubConnectionBuilder().WithUrl("https://tirarlacuerda.azurewebsites.net/hubCuerda").Build();
 
             _connection.On<string, int ,int>("nombreGanador", nombreGanadorEncontrado);
             _connection.On("IniciarJuego", empezar);
             _connection.On<int>("partidasJugadas", partidasjugadas);
+            _connection.On<string, string>("mensajeRevancha", mensajeRevancha);
+
 
             // Conectarse y suscribirse
             esperarConexion();
 
-
-            partidasJugadas = "Partida numero "+0;
+            mensajeRevanchaORendirse = "";
+            mensajeGanador = "";
+            partidasJugadas = "Partida numero : "+1;
             cmdVolver = new DelegateCommand(cmdVolver_Execute, true);
             cmdRevancha = new DelegateCommand(cmdRevancha_Execute, true);
         }
@@ -171,14 +181,14 @@ namespace Maui.ViewModels
                 if(nombre == jugador.Nombre)
                 {
                     mensajeGanador = "Enhorabuena, ganaste la partida!!!";                    
-                    puntosJugador = puntos2 / 2 ;
-                    puntosEnemigo = puntos1 / 2 ;
+                    puntosJugador = puntos1 / 2 ;
+                    puntosEnemigo = puntos2 / 2 ;
                 }
                 else
                 {
                     mensajeGanador = "Te ganó " + nombre + " más suerte la próxima vez";
-                    puntosJugador = puntos1 / 2 ;
-                    puntosEnemigo = puntos2 / 2 ;
+                    puntosEnemigo = puntos1 / 2;
+                    puntosJugador = puntos2 / 2 ;
                 }
 
                 //Si el jugador es igual al nombre devuelto, los puntos del jugador serán los del jugador 1 del HUB, los puntos del enemigo serán los del jugador 2 del HUB,
@@ -203,6 +213,25 @@ namespace Maui.ViewModels
                 NotifyPropertyChanged("PartidasJugadas");
             });
         }
+
+        private void mensajeRevancha(string mensaje, string nombre)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                // Si no eres el que le ha dado a revancha, te mostrará el mensaje
+                if (nombre != jugador.Nombre)
+                {
+                    mensajeRevanchaORendirse = mensaje;
+                    NotifyPropertyChanged("MensajeRevanchaORendirse");
+
+                    // Esperar 7 segundos antes de limpiar el mensaje
+                    await Task.Delay(700);
+                    mensajeRevanchaORendirse = "";
+                    NotifyPropertyChanged("MensajeRevanchaORendirse");
+                }
+            });
+        }
+
 
         /// <summary>
         /// Metodo que inicia la partida, me mandará a la ventana de la partida

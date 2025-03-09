@@ -56,7 +56,7 @@ namespace Maui.ViewModels
         #region Contructor
         public JuegoVM()
         {
-            _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
+            _connection = new HubConnectionBuilder().WithUrl("https://tirarlacuerda.azurewebsites.net/hubCuerda").Build();
 
             // Conectarse y suscribirse
             esperarConexion();
@@ -155,6 +155,7 @@ namespace Maui.ViewModels
                 {
                     MainThread.BeginInvokeOnMainThread(async () =>
                     {
+                        jugador.Puntuacion = 0;
                         await Shell.Current.GoToAsync("///FinalView", true, new Dictionary<string, object>
                         {
                             { "jugador", jugador }

@@ -18,8 +18,9 @@ namespace Tirar_la_cuerda.Hubs
 
             //Si el grupo no existe, se crea
             if (grupoActual == null)
-            {
-                grupoActual = new ClsGrupo();
+            {                
+                grupoActual = new ClsGrupo(); 
+                grupoActual.NumeroJuegos = 1;
                 grupoActual.Nombre = grupo;
                 grupos.Add(grupoActual);
                 ClsJugador jugador1 = new ClsJugador();
@@ -103,9 +104,12 @@ namespace Tirar_la_cuerda.Hubs
                 grupoActual.Jugadores[0].Listo = false;
                 grupoActual.Jugadores[1].Listo = false;
 
-
+                grupoActual.Jugadores[0].Grupo = "";
+                grupoActual.Jugadores[1].Grupo = "";
                 //Se envia a la vista los jugadores que hay en el grupo
                 await Clients.All.SendAsync("jugadoresDelGrupo", grupoActual.Jugadores[0], grupoActual.Jugadores[1]);
+
+                await Clients.All.SendAsync("mensajeRevancha", nombre + " se ha ido", nombre);
 
                 //Si los dos jugadores estan vacios, se elimina el grupo
                 if (grupoActual.Jugadores[0].Nombre == "" && grupoActual.Jugadores[1].Nombre == "")
@@ -218,16 +222,18 @@ namespace Tirar_la_cuerda.Hubs
             //Si la puntuacion del jugador 2 es mayor que la del jugador 1, se envia el nombre del jugador 2
             if (grupoActual.Jugadores[1].Puntuacion > grupoActual.Jugadores[0].Puntuacion)
             {
-                grupoActual.Jugadores[0].Victorias++;
+                grupoActual.Jugadores[1].Victorias++;
+                //Se envia a la vista el nombre del ganador y los puntos de los dos jugadores
+                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[0].Nombre, grupoActual.Jugadores[1].Victorias, grupoActual.Jugadores[0].Victorias);
             }
             //Si la puntuacion del jugador 1 es mayor que la del jugador 2, se envia el nombre del jugador 1
             else
             {   
-                grupoActual.Jugadores[1].Victorias++;
+                grupoActual.Jugadores[0].Victorias++;
+                //Se envia a la vista el nombre del ganador y los puntos de los dos jugadores
+                await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);
             }
 
-            //Se envia a la vista el nombre del ganador y los puntos de los dos jugadores
-            await Clients.All.SendAsync("nombreGanador", grupoActual.Jugadores[1].Nombre, grupoActual.Jugadores[0].Victorias, grupoActual.Jugadores[1].Victorias);
 
             //Al terminar el juego, se reinician los estados de listo
             grupoActual.Jugadores[0].Listo = false;
@@ -264,7 +270,7 @@ namespace Tirar_la_cuerda.Hubs
 
             //Se envia a la vista el numero de juegos jugados
             await Clients.All.SendAsync("partidasJugadas", grupoActual.NumeroJuegos);
-
+            await Clients.All.SendAsync("mensajeRevancha", nombre + " quiere volver a jugar", nombre);
         }
     }
 }

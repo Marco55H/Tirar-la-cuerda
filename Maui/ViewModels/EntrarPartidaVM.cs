@@ -20,6 +20,7 @@ namespace Maui.ViewModels
         private string llenoORepetido;
         private bool estaEnGrupo;
         private bool listo;
+        private bool repetidoOlleno;
         #endregion
 
         #region Propiedades 
@@ -48,13 +49,26 @@ namespace Maui.ViewModels
             get { return estaEnGrupo; }
             set
             {
-                estaEnGrupo = value;
-                NotifyPropertyChanged("EstaEnGrupo");
-                cmdSalirGrupo.RaiseCanExecuteChanged(); // Actualiza el estado del botón de salir
-                cmdPreparado.RaiseCanExecuteChanged(); // Actualiza el estado del botón de estar Preparado
+                if (estaEnGrupo != value)
+                {
+                    estaEnGrupo = value;
+                    NotifyPropertyChanged("EstaEnGrupo");
+
+                    cmdSalirGrupo.RaiseCanExecuteChanged();
+                    cmdPreparado.RaiseCanExecuteChanged();
+                    cmdUnirGrupo.RaiseCanExecuteChanged();
+                }
             }
         }
-
+        public bool RepetidoOlleno
+        {
+            get { return repetidoOlleno; }
+            set
+            {
+                repetidoOlleno = value;
+                NotifyPropertyChanged("RepetidoOlleno");
+            }
+        }
         public string Grupo
         {
 
@@ -63,6 +77,11 @@ namespace Maui.ViewModels
             set
             {
                 jugador.Grupo = value;
+                repetidoOlleno = false;
+                NotifyPropertyChanged("RepetidoOlleno"); 
+                estaEnGrupo = false;
+                NotifyPropertyChanged("EstaEnGrupo");
+                NotifyPropertyChanged("Jugador");
                 cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
@@ -81,6 +100,11 @@ namespace Maui.ViewModels
             set
             {
                 jugador.Nombre = value;
+                repetidoOlleno = false;
+                NotifyPropertyChanged("RepetidoOlleno");
+                estaEnGrupo = false;
+                NotifyPropertyChanged("EstaEnGrupo");
+                NotifyPropertyChanged("Jugador");
                 cmdUnirGrupo.RaiseCanExecuteChanged();
             }
 
@@ -114,7 +138,7 @@ namespace Maui.ViewModels
         public EntrarPartidaVM()
         {
             //Conectar con URL del servidor
-            _connection = new HubConnectionBuilder().WithUrl("https://localhost:7163/hubCuerda").Build();
+            _connection = new HubConnectionBuilder().WithUrl("https://tirarlacuerda.azurewebsites.net/hubCuerda").Build();
 
             _connection.On<ClsJugador, ClsJugador>("jugadoresDelGrupo", verNombres);
             _connection.On("GrupoLleno", grupoLleno);
@@ -124,10 +148,10 @@ namespace Maui.ViewModels
             // Esperar a que se conecte
             esperarConexion();
 
-            estaEnGrupo = false;
+            EstaEnGrupo = false;
             cmdUnirGrupo = new DelegateCommand(cmdUnirGrupo_Execute, cmdUnirGrupo_CanExecute);
-            cmdSalirGrupo = new DelegateCommand(cmdSalirGrupo_Execute, () => EstaEnGrupo);
-            cmdPreparado = new DelegateCommand(cmdPreparado_Execute, () => EstaEnGrupo);
+            cmdSalirGrupo = new DelegateCommand(cmdSalirGrupo_Execute,()=> EstaEnGrupo && !RepetidoOlleno && !cmdUnirGrupo_CanExecute());
+            cmdPreparado = new DelegateCommand(cmdPreparado_Execute, () => EstaEnGrupo && !RepetidoOlleno && !cmdUnirGrupo_CanExecute());
 
             listo=false;
             jugador = new ClsJugador();
@@ -137,70 +161,90 @@ namespace Maui.ViewModels
         #endregion
 
         #region Commands
-        //Ejecutar el comando, si se puede ejecutar, se envia al servidor que el jugador esta preparado
-        private async void cmdPreparado_Execute()
-        {
-           await _connection.InvokeCoreAsync("Preparado", args:
-           new[]
-                {
-                jugador.Grupo,
-                jugador.Nombre
-                }
-           );
-
-            listo = !listo;
-            NotifyPropertyChanged("Listo");
-        }
-
-        //Comprobar si se puede ejecutar el comando, si no hay nada vacio, se puede ejecutar
+        // Comprobar si se puede ejecutar el comando para unirse al grupo
         private bool cmdUnirGrupo_CanExecute()
         {
             bool sePuedeEjecutar = false;
-            if ( !string.IsNullOrEmpty(jugador.Nombre) && !string.IsNullOrEmpty(jugador.Grupo))
-            {
 
-                sePuedeEjecutar = true;
-                
-            }
-
-            if(EstaEnGrupo)
+            if (!string.IsNullOrEmpty(Nombre) && !string.IsNullOrEmpty(Grupo)) // Si el nombre y el grupo no están vacíos
             {
-                sePuedeEjecutar = false;
+                // Permitir unirse si no está en el grupo y el grupo no está lleno
+                if (!EstaEnGrupo && !RepetidoOlleno)
+                {
+                    sePuedeEjecutar = true;
+                }
+                // Si el nombre está repetido, el botón sigue habilitado para poder cambiar el nombre y unirse nuevamente
+                else if (!EstaEnGrupo && RepetidoOlleno)
+                {
+                    sePuedeEjecutar = true; // Permitir unirse aunque esté repetido para poder cambiar el nombre
+                }
             }
 
             return sePuedeEjecutar;
         }
 
-        //Ejecutar el comando, Salimos del grupo
-        private async void cmdSalirGrupo_Execute()
-        {
-            await _connection.InvokeCoreAsync("LeaveGroup", args:
-            new[]
-                {
-                jugador.Grupo,
-                jugador.Nombre
-                }
-            );
-            EstaEnGrupo = false;
-            NotifyPropertyChanged("EstaEnGrupo");
-            cmdUnirGrupo.RaiseCanExecuteChanged();
-        }
-
-        //Ejecutar el comando, añadimos al grupoa
+        // Ejecutar el comando para unirse al grupo
         private async void cmdUnirGrupo_Execute()
         {
-            await _connection.InvokeCoreAsync("JoinGroup", args:
-            new[]
+            if (!EstaEnGrupo && !RepetidoOlleno) // Solo ejecutar si no está en el grupo y el grupo no está lleno
+            {
+                await _connection.InvokeCoreAsync("JoinGroup", args:
+                new[]
                 {
-                jugador.Grupo,
-                jugador.Nombre
-                }
-            );
-            EstaEnGrupo = true;
-            NotifyPropertyChanged("EstaEnGrupo");
-            cmdUnirGrupo.RaiseCanExecuteChanged();
+            jugador.Grupo,
+            jugador.Nombre
+                });
+
+                EstaEnGrupo = true;
+                NotifyPropertyChanged("EstaEnGrupo");
+
+                RepetidoOlleno = false; // Resetear el estado de lleno/repetido al unirse
+                NotifyPropertyChanged("RepetidoOlleno");
+            }
+        }
+
+        // Ejecutar el comando, si se puede ejecutar, se envía al servidor que el jugador está preparado
+        private async void cmdPreparado_Execute()
+        {
+            if (!RepetidoOlleno && EstaEnGrupo) // Solo si el grupo no está repetido o lleno y el jugador está en un grupo
+            {
+                await _connection.InvokeCoreAsync("Preparado", args:
+                new[]
+                {
+            jugador.Grupo,
+            jugador.Nombre
+                });
+
+                listo = !listo; // Cambiar el estado de 'listo'
+                NotifyPropertyChanged("Listo");
+            }
+        }
+
+        // Ejecutar el comando para salir del grupo
+        private async void cmdSalirGrupo_Execute()
+        {
+            if (EstaEnGrupo && !RepetidoOlleno) // Solo si está en un grupo y el grupo no está repetido o lleno
+            {
+                await _connection.InvokeCoreAsync("LeaveGroup", args:
+                new[]
+                {
+            jugador.Grupo,
+            jugador.Nombre
+                });
+
+                EstaEnGrupo = false;
+                NotifyPropertyChanged("EstaEnGrupo");
+
+                // Resetear estado
+                listo = false;
+                Jugador.Listo = false;
+
+                NotifyPropertyChanged("Listo");
+                NotifyPropertyChanged("LlenoORepetido");
+            }
         }
         #endregion
+
 
         #region Métodos
 
@@ -211,8 +255,11 @@ namespace Maui.ViewModels
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                llenoORepetido = "Grupo lleno";
+                llenoORepetido = "Grupo lleno, Prueba otro o Espera";
                 NotifyPropertyChanged("LlenoORepetido");
+
+                repetidoOlleno = true;
+                NotifyPropertyChanged("RepetidoOlleno");
             });
         }
 
@@ -223,8 +270,11 @@ namespace Maui.ViewModels
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                llenoORepetido = "Nombre Repetido";
+                llenoORepetido = "Nombre Repetido, Modificalo";
                 NotifyPropertyChanged("LlenoORepetido");
+
+                repetidoOlleno = true;
+                NotifyPropertyChanged("RepetidoOlleno");
             });
         }
 
@@ -252,6 +302,12 @@ namespace Maui.ViewModels
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
+                EstaEnGrupo = false;
+                listo = false;
+                NotifyPropertyChanged("Listo");
+                NotifyPropertyChanged("EstaEnGrupo");
+                cmdUnirGrupo.RaiseCanExecuteChanged();
+
                 var diccionario = new Dictionary<string, object>
                 {
                 {"jugador", jugador}
@@ -267,10 +323,7 @@ namespace Maui.ViewModels
         /// <returns></returns>
         private async Task esperarConexion()
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                await _connection.StartAsync();
-            });
+                await _connection.StartAsync();           
         }
         #endregion
 
